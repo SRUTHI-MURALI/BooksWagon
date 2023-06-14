@@ -1,0 +1,161 @@
+<%- include('header') %>
+
+<!--================login_part Area =================-->
+<section class="login_part">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6 col-md-6 mt-5">
+        <div class="login_part_text text-center">
+            <div class="login_part_text_iner">
+                <h2>Alredy Account</h2>
+               
+                <a href="/login" class="btn_3">Create an Account</a>
+            </div>
+        </div>
+    </div>
+      <div class="col-lg-6 col-md-6">
+        <div class="login_part_form">
+          <div class="login_part_form_iner">
+            <h3>Please register now !</h3>
+            <form
+              class="row contact_form"
+              name="login_form"
+              action="/api/users"
+              method="post"
+              onsubmit="return  validateForm()"
+            >
+              <% if(locals.message) { %>
+              <div id="msg" class="alert alert-danger">
+                <%- locals.message -%>
+              </div>
+              <%}%>
+              <div class="col-md-12 form-group p_star">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="name"
+                  name="name"
+                  value=""
+                  placeholder="Username"
+                />
+              </div>
+              <div class="col-md-12 form-group p_star">
+                <input
+                  type="email"
+                  class="form-control"
+                  id="email"
+                  name="email"
+                  value=""
+                  placeholder="Email"
+                />
+              </div>
+              <div class="col-md-12 form-group p_star">
+                <input
+                  type="tel"
+                  class="form-control"
+                  id="phone"
+                  name="phone"
+                  value=""
+                  placeholder="Phone"
+                />
+              </div>
+              <div class="col-md-12 form-group p_star">
+                <input
+                  type="password"
+                  class="form-control"
+                  id="password"
+                  name="password"
+                  value=""
+                  placeholder="Password"
+                />
+              </div>
+              <div class="col-md-12 form-group p_star">
+                <input
+                  type="password"
+                  class="form-control"
+                  id="confirm_password"
+                  name="confirm_password"
+                  value=""
+                  placeholder="Confirm Password"
+                />
+              </div>
+
+              <div class="col-md-12 form-group">
+                <button type="submit" value="submit" class="btn_3">
+                  sign-up
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!--================login_part end =================-->
+
+<script>
+  setTimeout(() => {
+    document.getElementById("msg").style.display = "none";
+  }, 1000);
+</script>
+
+<script>
+  function validateForm() {
+    var name = document.forms["login_form"]["name"].value;
+    var email = document.forms["login_form"]["email"].value;
+    var password = document.forms["login_form"]["password"].value;
+    var phone = document.forms["login_form"]["phone"].value;
+    var confirm_password =
+      document.forms["login_form"]["confirm_password"].value;
+
+    if (
+      name == "" ||
+      email == "" ||
+      password == "" ||
+      phone == "" ||
+      confirm_password == ""
+    ) {
+      alert("Please fill in all fields.");
+      return false;
+    }
+
+    // Validate email
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      alert("Invalid email address.");
+      return false;
+    }
+
+    // Validate name
+    var nameRegex = /^[A-Za-z\s]+$/;
+    if (!nameRegex.test(name)) {
+      alert("Name should only contain letters and spaces.");
+      return false;
+    }
+
+    // Validate phone
+    var phoneRegex = /^\d{10}$/;
+    if (!phoneRegex.test(phone)) {
+      alert("phone should only be numbers and 10 digits.");
+      return false;
+    }
+
+    // Validate password
+    var passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).*$/;
+    if(!passwordRegex.test(password)){
+      alert("password Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters");
+      return false;
+    }
+
+    // Validate confirm password
+    if (password != confirm_password) {
+      alert("Password not match.");
+      return false;
+    }
+
+    return true;
+  }
+</script>
+
+<%- include('footer') %>

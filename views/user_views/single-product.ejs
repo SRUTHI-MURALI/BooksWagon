@@ -1,0 +1,206 @@
+<%- include('header') %>
+
+<style>
+  .image-holder{
+  width: 500px;
+  position: relative;
+  cursor: pointer;
+  >img{
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+}
+.image-preview{
+  width: 500px;
+  height: 500px;
+  overflow: hidden;
+  position: absolute;
+ margin-left: 30%;
+  >img{
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: scale(2);
+    transform-origin: left top ;
+  }
+}
+.d-none{
+  display: none !important;
+}
+.magnifiying-glass{
+  width: 100px;
+  height: 100px;
+  border: 1px dashed black;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: rgba(0,0,0,0.2);
+}
+figure{
+  display: inline;
+  vertical-align: top;
+}
+</style>
+
+<!-- breadcrumb part end-->
+
+<!--================Single Product Area =================-->
+<section class="breadcrumb_part single_product_breadcrumb">
+  <div class="container">
+    <div class="row" >
+      <div class="col-lg-6 product_img_slide owl-carousel">
+        <% for(let i=0;i< product.photo.length;i++) { %>
+        <div class="single_product_img mt-5 ">
+         
+          <figure class="image-holder">
+
+            <img 
+            style="width: 300px; margin-top: 0px"
+            src="/<%= product.photo[0] %>" id="image">
+          </figure>
+          
+          <div class="mt-5 ml-4">
+            <% if(product.stock <=5 ){ %>
+              <marquee width="60%" direction="up" height="80px"> <p style="color: rgb(216, 57, 14); font-style: italic ; font-family: Verdana, Geneva, Tahoma, sans-serif; font-weight: bold;"> limited Stock  !!! only <%= product.stock %> left</p> </marquee>
+              <% } %>
+          </div>
+          
+        </div>
+        
+       
+        <% } %>
+        
+      </div>
+     
+      <figure class="image-preview d-none ">
+          
+        <img 
+        style="width: 100px; margin-top: 0px"
+        src="/<%= product.photo[0] %>" id="image-preview">
+      </figure>
+    
+
+      <div class="col-lg-6 mt-5 ">
+        <div id="productText"  class="single_product_text text-center ml-5  ">
+          <h3><%= product.name %><br /></h3>
+          <p>
+            Lorem Ipsum is simply dummy text of the printing and typesetting
+            industry. Lorem Ipsum has been the industry's standard dummy text
+            ever since the 1500s, when an unknown printer took a galley of type
+            and scrambled it to make a type specimen book. It has survived not
+            only five centuries, but also the leap into electronic typesetting,
+            remaining essentially unchanged. It was popularised in the 1960s
+            with the release of Letraset sheets containing Lorem Ipsum passages,
+            and more recently with desktop publishing software like Aldus
+            PageMaker including versions of Lorem Ipsum.
+          </p>
+        </div>
+        <div class="single_product_text text-center">
+          <form action="/get_cart/<%= product._id %>" method="post">
+            <div class="card_area">
+              <div class="product_count_area">
+                <p style="color: rgb(29, 26, 26)">Quantity</p>
+                <div class="product_count d-inline-block">
+                  <span class="product_count_item inumber-decrement">
+                    <i class="ti-minus"></i
+                  ></span>
+                  <input
+                    name="quantity"
+                    class="product_count_item input-number"
+                    type="text"
+                    value="1"
+                    min="0"
+                    max="100"
+                  />
+                  <span class="product_count_item number-increment">
+                    <i class="ti-plus"></i
+                  ></span>
+                </div>
+
+                <p style="color: rgb(25, 23, 23)">
+                  <i class="fas fa-rupee-sign" &nbsp></i>&nbsp &nbsp;<%=
+                  product.price %>
+                </p>
+              </div>
+              <div class="add_to_cart text-center mt-4 ml-3">
+                <button type="submit" class="btn btn-light rounded-pill">
+                  add to cart
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!--================End Single Product Area =================-->
+<!-- subscribe part here -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  var productText = document.getElementById('productText');
+  var holder = document.querySelector('.image-holder');
+var image = document.getElementById('image');
+var previewHolder = document.querySelector('.image-preview');
+var imagePreview = document.getElementById('image-preview');
+imagePreview.src = image.src;
+
+holder.addEventListener('mousemove', (event) => {
+  var magGlass = document.querySelector('.magnifiying-glass');
+  let left = event.clientX - holder.getBoundingClientRect().left;
+  let top = event.clientY - holder.getBoundingClientRect().top;
+  let height = image.clientHeight;
+  let width = image.clientWidth;
+  let previewWidth = imagePreview.clientWidth;
+  let scaleValue = 2500 / previewWidth;
+  imagePreview.style.transform = 'scale(' + scaleValue + ')';
+  let magTop = top - 50;
+  let magLeft = left - 50;
+  if (magTop <= 0) {
+    magTop = 0;
+  }
+  if (magLeft <= 0) {
+    magLeft = 0;
+  }
+  if (magLeft >= width - 100) {
+    magLeft = width - 100;
+  }
+  if (magTop >= height - 100) {
+    magTop = height - 100;
+  }
+  magGlass.style.top = magTop + 'px';
+  magGlass.style.left = magLeft + 'px';
+  let topPercentage = (top / height) * 100;
+  let leftPercentage = (left / width) * 100;
+  imagePreview.style.top = -5 * magTop + 'px';
+  imagePreview.style.left = -5 * magLeft + 'px';
+});
+
+holder.addEventListener('mouseenter', () => {
+  previewHolder.classList.remove('d-none');
+  let magGlass = document.createElement('DIV');
+  productText.classList.add('d-none');
+  magGlass.className = 'magnifiying-glass';
+  holder.appendChild(magGlass);
+});
+
+holder.addEventListener('mouseleave', () => {
+  var magGlass = holder.querySelector('.magnifiying-glass');
+  previewHolder.classList.add('d-none');
+  productText.classList.remove('d-none');
+  magGlass.parentNode.removeChild(magGlass);
+  imagePreview.style.top = 0;
+  imagePreview.style.left = 0;
+});
+
+
+
+</script>
+
+
+
+<%- include('footer') %>

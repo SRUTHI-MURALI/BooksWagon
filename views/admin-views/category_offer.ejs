@@ -1,0 +1,90 @@
+<%- include('header') %>
+
+<!-- Table Start -->
+<div class="container-fluid pt-4 px-4">
+  <div class="row mb-5">
+    <div class="col-sm-3 col-xl-2">
+        <a href="/add_offer"><button>Add Offer</button></a>
+      </div>
+      
+    </div>
+       
+    <div class="col-12">
+      
+      <div class="bg-secondary rounded h-100 p-4">
+        <h6 class="mb-4">Offer</h6>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">offer category</th>
+
+                <th scope="col">Expiry Date</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Status</th>
+                
+
+              </tr>
+            </thead>
+
+            <tbody>
+             
+                <% offer.forEach(function(offer,index) { %>
+                <tr>
+                    <td><%= index+1 %></td>
+                    <td ><%= offer.category.category %></td>
+                 
+                    <td><%=  offer.expiry_date.toLocaleDateString()%></td>
+  
+                    <td ><%= offer.amount%> </td>
+                    
+                    <td>
+                    <% if(offer.status=='inactive'){ %>
+                        <a
+                          
+                          href="/activate_offer/<%= offer._id%>"
+                          class="btn border-shadow delete"
+                        >
+                          <span class="text-gradient">
+                            <i class="fas fa-times"></i>
+                          </span>
+                        </a>
+                        <% } else{ %>
+                        <a
+                         
+                          href="/inactivate_offer/<%= offer._id%>"
+                          class="btn border-shadow delete"
+                        >
+                          <span class="text-gradient">
+                            <i class="fa fa-check" aria-hidden="true"></i>
+                          </span>
+                        </a>
+                        <% } %>
+
+                    </td>
+               </tr>
+               <% }) %>
+            </tbody>
+           </table>
+          </div>
+      </div> 
+      </div>
+       <!-- Pagination -->
+       
+
+
+
+
+
+
+
+<!-- Table End -->
+
+<!-- <script>
+  setTimeout(() => {
+    document.getElementById("msg").style.display = "none";
+  }, 1000);
+</script> -->
+
+<%- include('footer') %>

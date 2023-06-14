@@ -1,0 +1,202 @@
+<%- include('header') %>
+
+<!-- Table Start -->
+<div class="container-fluid pt-4 px-4">
+  <div class="row g-4">
+    <form
+      class="d-none d-md-flex ms-0"
+      action="/search_admin_user"
+      method="GET"
+    >
+      <input
+        class="form-control bg-white"
+        name="name"
+        type="search"
+        placeholder="Search"
+      />
+    </form>
+    
+    <div class="col-12">
+      <% if(locals.msg) { %>
+      <div id="msg" class="alert alert-success"><%- locals.msg -%></div>
+      <%}%>
+      <div class="bg-secondary rounded h-100 p-4">
+        <h6 class="mb-4">User Data</h6>
+        <div class="table-responsive">
+          <table id="myTable" class="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+
+                <th scope="col">Email</th>
+                <th scope="col">Phone</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+
+            <tbody style="color: rgb(238, 232, 232)">
+              <% user_data.forEach(function(user,index) { %>
+              <tr>
+                <td><%= index+1 %></td>
+                <td><%= user.name %></td>
+                <td><%= user.email %></td>
+                <td><%= user.phone %></td>
+                <td>
+                  <% if(user.isBlocked){ %>
+                  <a
+                    onclick="confirmUnblockUser(event, '<%= user._id %>')"
+                    href="/unblock_user/<%= user._id %>"
+                    class="btn border-shadow update"
+                  >
+                    <span class="text-gradient">
+                      <i class="fas fa-lock"></i>
+                    </span>
+                  </a>
+                  <% } else{ %>
+
+                  <a
+                    onclick="confirmblockUser(event, '<%= user._id %>')"
+                    href="/block_user/<%= user._id %>"
+                    class="btn border-shadow update"
+                  >
+                    <span class="text-gradient"
+                      ><i class="fas fa-unlock"></i
+                    ></span>
+                  </a>
+
+                  <% } %>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Pagination -->
+<nav aria-label="Pagination">
+  <ul class="pagination justify-content-center mt-4">
+    <% if (currentPage > 1) { %>
+      <li class="page-item">
+        <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+          <span class="sr-only">Previous</span>
+        </a>
+      </li>
+    <% } %>
+
+    <% if(totalPages>1){ %>
+      <% for (let i = 1; i <= totalPages; i++) { %>
+        <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+          <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+        </li>
+      <% } %>
+      <% } %>
+
+    <% if (currentPage < totalPages) { %>
+      <li class="page-item">
+        <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+          <span class="sr-only">Next</span>
+        </a>
+      </li>
+    <% } %>
+  </ul>
+</nav>
+
+
+<!-- Table End -->
+
+<script>
+  setTimeout(() => {
+    document.getElementById("msg").style.display = "none";
+  }, 1000);
+</script>
+
+<script>
+  function confirmUnblockUser(event, userId) {
+    event.preventDefault();
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You are about to unblock this user",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, unblock it!",
+      cancelButtonText: "No, cancel",
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Make an AJAX request to update the user's status
+        $.ajax({
+          url: "/unblock_user/" + userId,
+          type: "GET",
+          success: function (response) {
+            // Handle the success response
+            Swal.fire({
+              title: "Updated!",
+              text: "User Is UnBlocked.",
+              icon: "success",
+            }).then(() => {
+              // Reload the page or update the UI as needed
+              window.location.reload();
+            });
+          },
+          error: function (error) {
+            // Handle the error response
+            Swal.fire({
+              title: "Error",
+              text: "Failed to unblock user.",
+              icon: "error",
+            });
+          },
+        });
+      }
+    });
+  }
+
+  function confirmblockUser(event, userId) {
+    event.preventDefault();
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You are about to block this user",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, block it!",
+      cancelButtonText: "No, cancel",
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Make an AJAX request to update the user's status
+        $.ajax({
+          url: "/block_user/" + userId,
+        type: "GET",
+          success: function (response) {
+            // Handle the success response
+            Swal.fire({
+              title: "Updated!",
+              text: "User blocked.",
+              icon: "success",
+            }).then(() => {
+              // Reload the page or update the UI as needed
+              window.location.reload();
+            });
+          },
+          error: function (error) {
+            // Handle the error response
+            Swal.fire({
+              title: "Error",
+              text: "Failed to block user.",
+              icon: "error",
+            });
+          },
+        });
+      }
+    });
+  }
+</script>
+
+<%- include('footer') %>

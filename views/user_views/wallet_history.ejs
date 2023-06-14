@@ -1,0 +1,104 @@
+<%- include('header') %>
+<!-- breadcrumb part start-->
+<section class="breadcrumb_part">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="breadcrumb_iner">
+            <h2>Wallet History</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- breadcrumb part end-->
+  
+          
+<div class="container mt-5">
+    <div class="row">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12" style="padding-right: 0px;">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="example3" class="table " style="width:100%">
+                        <thead>
+                            
+                            <tr>
+                                <th>#</th>
+                                <th scope="col">Order Id</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Total Wallet</th>
+                                
+                            </tr>
+                        </thead>
+                       
+                        <tbody>
+                            <% if(order) { %>
+                                <% order.forEach(function(order,index) { %>
+                            <tr>
+                                
+                                <td><%= index+1 %></td>
+                                <td><%= order._id %></td>
+                                <td><%= order.createdAt.toLocaleDateString() %></td>
+                                <td><%= order.total %></td>
+                                <td><%= order.isWallet %></td>
+                                <td><%=  order.walletTotal %></td>
+                                
+                            </tr>
+                            <% }) %> 
+                            <% }  %>
+                        
+                        
+                        
+                        </tbody>
+                           
+                        
+                    </table>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
+    
+<!-- Pagination -->
+<nav aria-label="Pagination">
+  <ul class="pagination justify-content-center mt-4">
+    <% if (currentPage > 1) { %>
+      <li class="page-item">
+        <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+          <span class="sr-only">Previous</span>
+        </a>
+      </li>
+    <% } %>
+
+    <% if(totalPages>1){ %>
+      <% for (let i = 1; i <= totalPages; i++) { %>
+        <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+          <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+        </li>
+      <% } %>
+      <% } %>
+
+    <% if (currentPage < totalPages) { %>
+      <li class="page-item">
+        <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+          <span class="sr-only">Next</span>
+        </a>
+      </li>
+    <% } %>
+  </ul>
+</nav>
+
+<script>
+    setTimeout(() => {
+    document.getElementById('msg').style.display="none"
+    }, 3000);
+</script>
+   
+
+<%- include('footer') %>

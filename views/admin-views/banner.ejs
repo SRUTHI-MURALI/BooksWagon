@@ -1,0 +1,165 @@
+<%- include('header') %>
+
+<!-- Table Start -->
+
+<div class="container-fluid pt-4 px-4">
+  <div class="row g-4">
+    <div class="col-sm-3 col-xl-2 mb-5">
+      <a href="/add_banner"><button>Add Banner Image</button></a>
+    </div>
+    <div class="row">
+    <div class="col-12">
+        <div class="bg-secondary rounded h-100 p-4">
+          <h6 class="mb-4">Banner</h6>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr class="text-white">
+                  <th scope="col">#</th>
+                  
+                  <th scope="col">Photo</th>
+                  
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody class="text-white">
+                <% banner.forEach((banner,index)=>{ %>
+                <tr>
+                  <td ><%= index+1 %></td>
+                  <td>
+                    <% for(let i=0;i < banner.banner_image.length;i++){ %>
+                    <img
+                      class="img-thumbnail"
+                      width="100px"
+                      src=" /<%= banner.banner_image[i] %>"
+                      
+                    />
+                    <% } %>
+                  </td>
+                    <td>
+                    <a
+                    href="/edit_banner/<%= banner._id %>"
+                      class="btn border-shadow update"
+                    >
+                      <span class="text-gradient"
+                        ><i class="fas fa-pencil-alt"></i
+                      ></span>
+                    </a>
+                    <% if(banner.isDeleted){ %>
+                        <a
+                          onclick="confirmlistBanner(event, '<%= banner._id %>')"
+                          href="/list_banner/<%= banner._id%>"
+                          class="btn border-shadow delete"
+                        >
+                          <span class="text-gradient">
+                            <i class="fas fa-times"></i>
+                          </span>
+                        </a>
+                        <% } else{ %>
+                        <a
+                          onclick="confirmUnlistBanner(event, '<%= banner._id %>')"
+                          href="/unlist_banner/<%= banner._id%>"
+                          class="btn border-shadow delete"
+                        >
+                          <span class="text-gradient">
+                            <i class="fa fa-check" aria-hidden="true"></i>
+                          </span>
+                        </a>
+                        <% } %>
+                  </td>
+                </tr>
+               <% }) %>
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+    function confirmlistBanner(event, bannerid) {
+      event.preventDefault();
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You are about to list this banner",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, list it!",
+        cancelButtonText: "No, cancel",
+        reverseButtons: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Make an AJAX request to update the user's status
+          $.ajax({
+            url: "/list_banner/" + bannerid,
+            type: "GET",
+            success: function (response) {
+              // Handle the success response
+              Swal.fire({
+                title: "Listed!",
+                text: "Banner is listed .",
+                icon: "success",
+              }).then(() => {
+                // Reload the page or update the UI as needed
+                window.location.reload();
+              });
+            },
+            error: function (error) {
+              // Handle the error response
+              Swal.fire({
+                title: "Error",
+                text: "Failed to list banner.",
+                icon: "error",
+              });
+            },
+          });
+        }
+      });
+    }
+
+    function confirmUnlistBanner(event, bannerid) {
+      event.preventDefault();
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You are about to unlist this banner",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, unlist it!",
+        cancelButtonText: "No, cancel",
+        reverseButtons: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Make an AJAX request to update the user's status
+          $.ajax({
+            url: "/unlist_banner/" + bannerid,
+            type: "GET",
+            success: function (response) {
+              // Handle the success response
+              Swal.fire({
+                title: "Unlisted!",
+                text: "Banner is unlisted.",
+                icon: "success",
+              }).then(() => {
+                // Reload the page or update the UI as needed
+                window.location.reload();
+              });
+            },
+            error: function (error) {
+              // Handle the error response
+              Swal.fire({
+                title: "Error",
+                text: "Failed to unlist banner.",
+                icon: "error",
+              });
+            },
+          });
+        }
+      });
+    }
+  </script>
+
+<%- include('footer') %>

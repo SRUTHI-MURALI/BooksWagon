@@ -1,0 +1,109 @@
+<%- include('header') %>
+
+<!-- Table Start -->
+<div class="container-fluid pt-4 px-4">
+  <div class="row g-4">
+    <div class="col-sm-3 col-xl-2">
+      <a href="/add_category"><button>Add Category</button></a>
+    </div>
+    <form class="d-none d-md-flex ms-0" action="/search_admin_category" method="GET">
+      <input class="form-control bg-white " name="name" type="search" placeholder="Search">
+    </form>
+    <div class="col-12 ">
+      <div class="bg-secondary  rounded h-100 p-4">
+        <h6 class="mb-4">Categories</h6>
+        <div class="table-responsive">
+          <table class="table">
+            <thead class="text-white">
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Category</th>
+                <th scope="col">Description</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody  class="text-white">
+              <% category_find.forEach(function(category, index) { %>
+              <tr>
+                <td><%= index + 1 %></td>
+                <td style="word-break: break-all;"><%= category.category %></td>
+                <td style="word-break: break-all;" ><%= category.description %></td>
+                <td>
+                  <a 
+                  
+                  href="/edit/<%= category._id %>" class="btn border-shadow update">
+                    <span class="text-gradient">
+                      <i class="fas fa-pencil-alt"></i>
+                    </span>
+                  </a>
+                  <a 
+                  onclick="confirmDeleteCategory(event, '<%=  category._id %>')"
+                  href="/delete_category/<%= category._id %>" class="btn border-shadow delete">
+                    <span class="text-gradient">
+                      <i class="fas fa-times"></i>
+                    </span>
+                  </a>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+            
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Table End -->
+
+
+
+<script>
+  function confirmDeleteCategory(event, categoryId) {
+    event.preventDefault();
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You are about to delete this category",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, cancel",
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Make an AJAX request to update the user's status
+        $.ajax({
+          url: "/delete_category/" + categoryId,
+          type: "GET",
+          success: function (response) {
+            // Handle the success response
+            Swal.fire({
+              title: "Deleted!",
+              text: "Category Is Deleted.",
+              icon: "success",
+            }).then(() => {
+              // Reload the page or update the UI as needed
+              window.location.reload();
+            });
+          },
+          error: function (message) {
+            // Handle the error response
+            // let errorMessage = "Category already in use";
+            
+            Swal.fire({
+              title: "Error",
+              text: "Category already in use",
+              icon: "error",
+        });
+      }
+    });
+  }
+})
+
+  }
+
+
+
+</script>
+
+<%- include('footer') %>

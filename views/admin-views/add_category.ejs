@@ -1,0 +1,70 @@
+<%- include('header') %>
+
+<!-- Form Start -->
+<div class="container-fluid pt-4 px-4">
+  <div class="row g-4 align-items-center justify-content-center mt-5">
+    <div class="col-sm-12 col-xl-6">
+      <div class="bg-secondary rounded h-100 p-4">
+        <h6 class="mb-4">Add Category</h6>
+
+        <form
+          action="/add_category_submit"
+          onsubmit="return  validateForm()"
+          name="login_form"
+          method="POST"
+        >
+          <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label"
+              >Category</label
+            >
+            <input type="text" class="form-control" name="category" />
+          </div>
+          <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label"
+              >Description</label
+            >
+            <input type="text" class="form-control" name="description" />
+          </div>
+          <button type="submit" class="btn btn-primary">Add Category</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Form End -->
+
+<%- include('footer') %>
+
+<script>
+  function validateForm() {
+    var category = document.forms["login_form"]["category"].value;
+    var description = document.forms["login_form"]["description"].value;
+   
+    if (
+      category.trim() == "" ||
+      description.trim() == "" 
+    ) {
+      alert("Please fill in all fields.");
+      return false;
+    }
+
+
+    // Validate category
+    var categoryRegex = /^[A-Za-z\s]+$/;
+    if (!categoryRegex.test(category)) {
+      alert("category should only contain letters and spaces.");
+      return false;
+    }
+
+   // Validate description
+   var descriptionRegex = /^[A-Za-z\s]+$/;
+    if (!descriptionRegex.test(description)) {
+      alert("description should only contain letters and spaces.");
+      return false;
+    }
+
+
+
+    return true;
+  }
+</script>

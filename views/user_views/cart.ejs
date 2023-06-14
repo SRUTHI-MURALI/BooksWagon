@@ -1,0 +1,296 @@
+<%- include('header') %>
+    
+  <!--================Cart Area =================-->
+  <section class="cart_area ">
+    <div class="container">
+      <div class="cart_inner">
+       
+        <div class="table-responsive">
+          <table class="table " id="cart-item" >
+            <thead>
+              <tr>
+                <th scope="col">Product</th>
+                
+                <th scope="col">Price</th>
+                <th scope="col">Quantity</th> 
+                
+                <th scope="col">Total</th>
+            
+                
+              </tr>
+              <tr>
+               
+                
+              </tr>
+            </thead>
+            <tbody>
+             <% if(cart){ %>
+
+              <% cart.items.forEach(function(product) { %>
+                <tr id="remove_<%= product.product._id %>">
+                 
+
+                  <td>
+                    <div class="media">
+                      <div class="d-flex">
+                        <img src="/<%= product.product.photo[0] %>" alt="img" />
+                      </div>
+                      <div class="media-body">
+                        <h4><%= product.product.name %></h4>
+                       <!-- <h4><%= product.product._id %></h4> -->
+                      </div>
+                    </div>
+                  </td>
+                  <td class=""> ₹ <%= product.price %></td>
+                  <td>         
+                    <button class="cart-item-count " id="decrement_<%= product.product._id %>"
+                      onclick="decrementQuantity('<%= product.product._id %>')">-</button>
+                      <span id="quantity_<%= product.product._id %>" name="quantity"><%= product.quantity %></span>
+                    <button class="cart-item-count mr-4" id="increment_<%= product.product._id %>"
+                      onclick="incrementQuantity('<%= product.product._id %>')">+</button>
+                  
+                  </td>
+                                 
+                      
+                      <td class="total price">
+                        <% var total = product.quantity * product.price; %>
+                       
+                        <h5> ₹ <span  id="product-total-price-<%= product.product._id %>" class="item-total "> <%= total %> </span></h5>
+                       
+                      </td>
+                      
+                      <td>
+                        <button class="btn btn-danger" id="Remove"   onclick="confirmProductRemove(event, '<%= product.product._id %>')"  > Remove </button>
+                      </td>
+                
+               
+                </tr>
+              
+                <% }) %>
+              
+              
+              
+              <tr>
+                <td></td>
+                <td></td>
+                <td>
+                  <h5>Subtotal</h5>
+                </td>
+                <td class="cart-items">
+                
+                  <td>
+                    <h5>₹ <span id="subtotal" ></span></h5>
+                  </td>
+        
+                </td>
+              </tr>
+
+             
+            <%} %>
+            
+           
+            
+            </tbody>
+          </table>
+          <div class="checkout_btn_inner float-right">
+            <a class="btn_1" href="/product_list">Continue Shopping</a>
+            <% if(cart){ %>
+            <a class="btn_1 checkout_btn_1" href="/address_page">Proceed to checkout</a>
+            <% }; %>
+          </div>
+        </div>
+      </div>
+  </section>
+
+ 
+ 
+  <!-- Pagination -->
+<nav aria-label="Pagination">
+  <ul class="pagination justify-content-center mt-4">
+    <% if (currentPage > 1) { %>
+      <li class="page-item">
+        <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+          <span class="sr-only">Previous</span>
+        </a>
+      </li>
+    <% } %>
+<% if(totalPages>1){ %>
+  <% for (let i = 1; i <= totalPages; i++) { %>
+    <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+      <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+    </li>
+  <% } %>
+
+<% } %>
+    
+
+    <% if (currentPage < totalPages) { %>
+      <li class="page-item">
+        <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+          <span class="sr-only">Next</span>
+        </a>
+      </li>
+    <% } %>
+  </ul>
+</nav>
+
+  
+  <!--================End Cart Area =================-->
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+
+  <script>
+    const setSubtotal=()=>{
+      const itemTotal=document.getElementsByClassName('item-total')
+      
+      let subtotal=0;
+      for (let i = 0; i < itemTotal.length; i++) {
+  
+        subtotal+=Number(itemTotal[i].innerHTML)
+      
+        
+      }
+      
+      document.getElementById('subtotal').innerHTML=subtotal;
+  
+    }
+    setSubtotal();
+    
+    function incrementQuantity(cartItemId){
+
+     
+   
+      $.ajax({
+        url:'/cart/increase_quantity',
+        method:"post",
+        data:{cartItemId:cartItemId},
+        success:function(data){
+          if(data.success==true){
+            
+            $(`#product-total-price-${cartItemId}`).text(data.total)
+            
+            $(`#quantity_${cartItemId}`).text(data?.quantity)
+            
+            setSubtotal();
+          }else if(data.success==false){
+            
+            if (data.maxQuantity||data.maxQuantity==0) {
+              Toastify({
+              text: "Stock Limit Exceeded",
+              className: "info",
+                  style: {
+                  background: "red",
+                  
+                },
+                
+                position: "center",
+                gravity: "center"
+                }).showToast();
+        }
+        
+            
+            setSubtotal();
+          }else{
+            console.log('error');
+          }
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+          console.error(errorThrown);
+        }
+      })
+    }
+  
+    function decrementQuantity(cartItemId) {
+    
+      var currentQuantity = parseInt($(`#quantity_${cartItemId}`).text());
+      if (currentQuantity > 1) {
+      $.ajax({
+      url: "/cart/decrease_quantity",
+      method: "post",
+      data: { cartItemId: cartItemId },
+      success: function(data) {
+        // Handle success response here
+        console.log(data);
+        $(`#product-total-price-${cartItemId}`).text(data.total);
+        $(`#quantity_${cartItemId}`).text(data?.quantity);
+        setSubtotal();
+        
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        // Handle error response here
+        res.send('error')
+      }
+      });
+      }else{
+      $(`#quantity_${cartItemId}`).text(1);
+      }
+      
+     
+    }
+  
+    function productRemove(product){
+     
+      $.ajax({
+          url:"/delete_cart",
+        type:"post",
+        data:{product:product},
+        success:function(data){
+        
+          if(data.status){
+            
+            // const cartItem=document.querySelector(`tr[data-item-id="${product}"]`)
+            const id=`remove_${product}`
+            document.getElementById(id).remove()
+            setSubtotal();
+           
+            if (data.length==0) {
+             
+              window.location.href = '/empty_cart';
+            }
+            
+          }else{
+            console.log('error');
+          }
+  
+        }	
+      })
+    }
+
+
+
+
+    function confirmProductRemove(event, product) {
+  event.preventDefault();
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You are about to remove this product",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Yes, remove it!",
+    cancelButtonText: "No, cancel",
+    reverseButtons: true,
+  }).then((result) => {
+    if (result.isConfirmed) {
+		Swal.fire({
+        title: "Deleted!",
+        text: "Product Delete From Cart",
+        icon: "success"
+      })
+      productRemove(product);
+    }
+  });
+}
+
+
+
+
+    </script>
+
+  <%- include('footer') %>

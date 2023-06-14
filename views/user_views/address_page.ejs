@@ -1,0 +1,215 @@
+<%- include('header') %>
+
+<!-- breadcrumb part start-->
+<section class="organic-breadcrumb ">
+  <div class="container">
+    <div class="row">
+        <div class="col-md-5"></div>
+      <div class="col-lg-7 mt-5  ">
+        <div class="breadcrumb_iner">
+          <h2>Address</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- breadcrumb part end-->
+
+<!--================Checkout Area =================-->
+<section class="checkout_area section_padding">
+  <div class="container">
+    <div class="billing_details">
+      <div class="row">
+        <div class="col-lg-8">
+          <h3>Billing Details</h3>
+
+          <form
+            class="row contact_form"
+            action="/add_address"
+            method="post"
+            name="login_form" 
+            onsubmit="return  validateForm()"
+            
+          >
+            <div class="col-md-12 form-group">
+              <input
+                type="text"
+                class="form-control"
+              
+                name="name"
+                placeholder="name"
+              />
+            </div>
+
+           
+            <div class="col-md-6 form-group">
+              <input
+                type="text"
+                class="form-control"
+           
+                name="phone"
+                placeholder="Phone number"
+              />
+            </div>
+            <div class="col-md-6 form-group">
+              <input
+                type="text"
+                class="form-control"
+          
+                name="email"
+                placeholder="Email Address"
+              />
+            </div>
+
+            <div class="col-md-12 form-group">
+              <input
+                type="text"
+                class="form-control"
+             
+                name="add1"
+                placeholder="Address line 01"
+              />
+            </div>
+            <div class="col-md-12 form-group">
+              <input
+                type="text"
+                class="form-control"
+              
+                name="add2"
+                placeholder="Address line 02"
+              />
+            </div>
+            <div class="col-md-12 form-group">
+              <input
+                type="text"
+                class="form-control"
+              
+                name="city"
+                placeholder="Town/City"
+              />
+            </div>
+
+            <div class="col-md-12 form-group">
+              <input
+                type="text"
+                class="form-control"
+              
+                name="pin_number"
+                placeholder="Postcode/ZIP"
+              />
+            </div>
+            <div class="col-md-12 form-group">
+              <div class="checkout_btn_inner">
+                <button type="submit" class="btn btn-danger">
+                  <a style="color: wheat"> Add  a New Address</a>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+        
+        <div class="col-lg-4">
+          <h3>Existing Address</h3>
+          <% address.address.forEach(function(address, index) { %>
+          <form class="contact_form" method="post" action="/checkout">
+            <div class="col-md-12 form-group">
+              <input type="radio" id="f-option<%= index %>" name="selectedAddress" value="<%= address._id %>" required />
+              <label for="f-option<%= index %>"><h5 style="text-decoration: underline;">Address <%= index+1 %></h5></label>
+              <p><%= address.name %></p>
+              <p><%= address.add1 %> <%= address.add2 %></p>
+              <p><%= address.city %></p>
+              <p><%= address.pin_number %></p>
+              <p><%= address.phone %></p>
+              <p><%= address.email %></p>
+            </div>
+          <% }); %>
+          <button type="submit" class="btn-sm btn-block btn_3">proceed to checkout</button>
+          </form>
+        </div>
+        
+        
+       </div>
+      </div>
+    
+    </div>
+  </div>
+</section>
+<!--================End Checkout Area =================-->
+
+<script>
+  function validateForm() {
+    
+    var email = document.forms["login_form"]["email"].value;
+    var phone = document.forms["login_form"]["phone"].value;
+   
+    var name=document.forms["login_form"]["name"].value;
+    var add1=document.forms["login_form"]["add1"].value;
+    var add2=document.forms["login_form"]["add2"].value;
+    var city=document.forms["login_form"]["city"].value;
+    var pin_number=document.forms["login_form"]["pin_number"].value;
+    
+    if (
+     
+      email == "" ||
+      phone == "" ||
+      name == "" ||
+      add1 == "" ||
+      add2 == "" ||
+      city == "" ||
+      pin_number == "" 
+    ) {
+      alert("Please fill in all fields.");
+      return false;
+    }
+
+    // Validate email
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      alert("Invalid email address.");
+      return false;
+    }
+
+
+    // Validate phone
+    var phoneRegex = /^\d{10}$/;
+    if (!phoneRegex.test(phone)) {
+      alert("phone should only be numbers and 10 digits.");
+      return false;
+    }
+
+   
+    
+    // Validate name
+    var nameRegex = /^[A-Za-z\s]+$/;
+    if (!nameRegex.test(name)) {
+      alert("Name should only contain letters and spaces.");
+      return false;
+    }
+
+
+    // validate add1 && add2
+    const addressRegex = /^[a-zA-Z0-9\s\.,#-]{3,}$/;
+    if (!addressRegex.test(add1)) {
+      alert("Invalid street address");
+      return false;
+    }
+
+    //validate city
+    const cityRegex = /^[a-zA-Z\s-]{2,}$/;
+    if (!cityRegex.test(city)) {
+      alert("Invalid city name");
+      return false;
+    }
+
+    //validate pincode
+    // const postalCodeRegex = /^\d{5}(?:[-\s]\d{4})?$/;
+    // if (!postalCodeRegex.test(pin_number)) {
+    //   alert("Invalid postal code");
+    //   return false;
+    // }
+
+    return true;
+  }
+</script>
+
+<%- include('footer') %>

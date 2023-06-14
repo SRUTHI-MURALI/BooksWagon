@@ -1,0 +1,41 @@
+<%- include('header') %>
+
+<!-- Form Start -->
+<div class="container-fluid pt-4 px-4">
+  <div class="row g-4 align-items-center justify-content-center mt-5">
+    <div class="col-sm-12 col-xl-6">
+      <div class="bg-secondary rounded h-100 p-4">
+        <h6 class="mb-4">Update Banner</h6>
+        <form action="/update_banner/<%= banner._id %>" id="update_banner" name="basic" method="post" enctype="multipart/form-data">
+          
+         
+          
+          <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label"
+              >isDeleted</label
+            >   
+            <input type="text" class="form-control" name="isDeleted" value="<%= banner.isDeleted %>" />
+          </div>
+       
+          <div class="form-group mt-3">
+            <label for="image">Photo file:</label>
+          
+            <input type="file" multiple class="form-control-file" id="photo" name="photo">
+            <% for(let i=0; i < banner.banner_image.length;i++){ %>
+            <img src=" /<%= banner.banner_image[i] %>" width="100" class="img-thumbnail mt-3 ml-2" alt="">
+          <% } %>
+          </div>
+      
+       
+
+          <button type="submit" class="btn btn-primary mt-5">
+            Update Product
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Form End -->
+
+<%- include('footer') %>

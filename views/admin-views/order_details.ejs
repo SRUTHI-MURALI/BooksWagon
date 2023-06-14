@@ -1,0 +1,89 @@
+<%- include('header') %>
+
+<!-- Table Start -->
+<div class="container-fluid pt-4 px-4">
+  <div class="row g-4">
+    <form class="d-none d-md-flex ms-0" action="/search_admin_user" method="GET">
+      <input class="form-control bg-white " name="name" type="search" placeholder="Search">
+  </form>
+    <div class="col-12">
+      <% if(locals.msg) { %>
+      <div id="msg" class="alert alert-success"><%- locals.msg -%></div>
+      <%}%>
+      <div class="bg-secondary rounded h-100 p-4">
+        <h6 class="mb-4">Order Details</h6>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr >
+                <th scope="col">#</th>
+                <th scope="col">Customer</th>
+                <th scope="col">product Name</th>
+               
+
+                <th scope="col">Quantity</th>
+                <!-- <th scope="col">Email</th>
+                <th scope="col">Status</th> -->
+                <th scope="col">Price</th>
+                <th scope="col">Total</th>
+                <th scope="col">payment </th>
+                
+                <th scope="col">Photo</th>
+                <th scope="col" >Address</th>
+               
+              </tr>
+            </thead>
+
+            <tbody style="color: rgb(238, 232, 232)" >
+              
+                <% orders.items.forEach((item,index) => { %>
+                    <tr style="white-space:pre-line">
+                      <td><%= index + 1 %></td>
+                      <td><%= orders.user.name %></td>  
+                      <td><%= item.product.name %></td>
+                      <td><%= item.quantity %></td>
+                      <td><%= item.price %></td>
+                      <td><%= item.price *item.quantity  %></td>
+                      <td ><%= orders.payment_method %></td>
+                      <td><img src="/<%= item.product.photo[0] %>" style="width:100px" alt="img" /> </td>
+                      <td>
+                        <%= orders.address.add1 %>
+                        <%= orders.address.add2 %>
+                        <%= orders.address.city %>
+                        <%= orders.address.phone %>
+                        <%= orders.address.pin_number %>
+                    </td>
+                      
+                      
+                     
+                      
+                    </tr>
+                  <% }); %>
+                  
+                
+            </tbody>
+            
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+<!-- Table End -->
+
+<script>
+  setTimeout(() => {
+    document.getElementById("msg").style.display = "none";
+  }, 1000);
+</script>
+
+<%- include('footer') %>

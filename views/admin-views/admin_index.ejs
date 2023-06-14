@@ -1,0 +1,165 @@
+<%- include('header') %>
+
+<!-- Sale & Revenue Start -->
+<div class="container-fluid pt-4 px-4">
+  <div class="row g-4">
+    <div class="col-sm-6 col-xl-3">
+      <div
+        class="bg-secondary rounded d-flex align-items-center justify-content-between p-4"
+      >
+        <i class="fa fa-chart-line fa-3x text-primary"></i>
+        <div class="ms-3">
+          <p class="mb-2">Monthly Sale</p>
+          <h6 class="mb-0"><%= totalPrice %></h6>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <div
+        class="bg-secondary rounded d-flex align-items-center justify-content-between p-4"
+      >
+        <i class="fa fa-chart-bar fa-3x text-primary"></i>
+        <div class="ms-3">
+          <p class="mb-2">Total Users</p>
+          <h6 class="mb-0"><%= totalUsers %></h6>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <div
+        class="bg-secondary rounded d-flex align-items-center justify-content-between p-4"
+      >
+        <i class="fa fa-chart-area fa-3x text-primary"></i>
+        <div class="ms-3">
+          <p class="mb-2">Today Orders</p>
+          <h6 class="mb-0"><%= totalOrders %></h6>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+      <div
+        class="bg-secondary rounded d-flex align-items-center justify-content-between p-4"
+      >
+        <i class="fa fa-chart-pie fa-3x text-primary"></i>
+        <div class="ms-3">
+          <p class="mb-2">Total Revenue</p>
+          <h6 class="mb-0"><%= totalPrice %></h6>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Sale & Revenue End -->
+
+<!-- Chart Start -->
+<div class="container-fluid pt-4 px-4">
+  <div class="row g-4">
+    <div class="col-sm-12 col-xl-6">
+      <div class="bg-secondary rounded h-100 p-4">
+        <h6 class="mb-4">Monthly Sales</h6>
+        <form>
+          <label for="year">Select a year:</label>
+          <input
+            type="number"
+            id="year"
+            name="year"
+            min="2022"
+            max="2023"
+            value="2023"
+          />
+          <button type="button" onclick="updateSalesData()" class="btn-dark">
+            Update
+          </button>
+        </form>
+        <canvas id="myChart"></canvas>
+
+        <!-- Sales Chart End -->
+      </div>
+    </div>
+
+    <div class="col-sm-12 col-xl-6">
+      <div class="bg-secondary rounded h-100 p-4">
+        <h6 class="mb-4">Total Sales</h6>
+        <canvas id="myChart2"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Chart End -->
+
+<%- include('footer') %>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  let salesData = {
+      <% for (const [month, count] of Object.entries(monthlySales)) { %>
+        '<%= month %>': <%= count %>,
+      <% } %>
+    }
+console.log(salesData);
+  const ctx = document.getElementById('myChart');
+  let myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['January', 'February', 'March', 'April', 'May', 'June','july','August','September','October','november','December'],
+      datasets: [{
+        label: 'Number of sales',
+        data: Object.values(salesData),
+        borderWidth: 1
+      }]
+    },
+     options: {
+      scales: { 
+        y: {
+          beginAtZero: true,
+          max: 100,
+      ticks: {
+        stepSize: 20
+      }
+      }
+        }
+      }
+  });
+
+  
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  let salesData2 = {
+    '2023':  [<%= data.deliveredCounts %>, <%= data.placedCounts %>, <%= data.cancelledCounts %>, <%= data.returnCounts %>]
+  };
+
+  const ctx2 = document.getElementById('myChart2');
+
+  const data = {
+    labels: [
+      'Orders Delivered',
+      'Orders Placed',
+      'Orders Returned',
+      'Orders Cancelled'
+    ],
+    datasets: [{
+      label: 'Orders Status',
+      data: salesData2['2023'],
+      backgroundColor: [
+        'rgb(255, 99, 132)',
+        'rgb(54, 162, 235)',
+        'rgb(255, 205, 86)',
+        'rgb(75, 192, 192)'
+      ],
+      hoverOffset: 4
+    }]
+  };
+
+  const config = {
+    type: 'pie',
+    data: data,
+  };
+
+  new Chart(ctx2, config);
+</script>
+
+

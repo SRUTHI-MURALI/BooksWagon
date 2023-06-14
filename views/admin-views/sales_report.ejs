@@ -1,0 +1,149 @@
+<%- include('header') %>
+
+<!-- sales-report.ejs -->
+<div class="container">
+  <div class="col-lg-4">
+    <div class="row mt-3">
+      <div class="">
+        <!-- product.ejs -->
+        <form id="filterForm" action="/filter_salesreport" method="post" onsubmit="filterSalesReport(event)">
+          <label for="minPrice">Start: </label>
+          <input
+            type="date"
+            name="startdate"
+            style="width: 110px"
+            id="minPrice",
+            placeholder="Start"
+            id="selectedDates"
+          />
+          <label for="maxPrice">to</label>
+          <input
+            type="date"
+            name="enddate"
+            style="width: 110px"
+            id="maxPrice",
+            placeholder="End"
+          />
+          <button type="submit" class="ml-2 btn-info" style="width: 80px">
+            Filter
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container mt-5">
+  <div  class="table-container bg-light">
+   
+  <table class="bg-light" id="adminTable">
+ 
+    <thead>
+      <tr class="text-white">
+        <th>Date</th>
+        <th>order Id</th>
+        <th>User Name</th>
+        <th>Item</th>
+        <th>Price</th>
+        <th>Payment Method</th>
+      </tr>
+    </thead>
+    <tbody id="sample">
+      <% salesData.forEach((sale) => { %>
+        <% sale.items.forEach((item) => { %>
+          <tr>
+            <td><%= sale.createdAt.toLocaleDateString() %></td>
+            <td><%= sale._id %></td>
+            <td><%= sale.user.name %></td>
+            <td><%= item.quantity %></td>
+            <td><%= sale.total %></td>
+            <td><%= sale.payment_method %></td>
+          </tr>
+        <% }) %>
+      <% }) %>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+  <%- include('footer') %>
+  
+  
+
+<script>
+    $(document).ready(function() {
+      $('#adminTable').DataTable({
+        dom: 'Bfrtip',
+        buttons: [
+          {
+            extend: 'copy',
+            text: 'Copy',
+            className: 'btn btn-primary'
+          },
+          {
+            extend: 'csv',
+            text: 'CSV',
+            className: 'btn btn-success'
+          },
+          {
+            extend: 'excel',
+            text: 'Excel',
+            className: 'btn btn-danger'
+          },
+          {
+            extend: 'pdf',
+            text: 'PDF',
+            className: 'btn btn-warning'
+          },
+          {
+            extend: 'print',
+            text: 'Print',
+            className: 'btn btn-info'
+          }
+        ]
+      });
+    });
+</script>
+
+
+  <script>
+  // Get the form element using its ID
+  const form = document.getElementById("filterForm");
+  
+
+  // Add a submit event listener to the form
+  form.addEventListener("submit", filterSalesReport);
+
+  function filterSalesReport(event) {
+   
+    event.preventDefault(); // Prevent the form from submitting
+
+    // Get the selected start and end dates
+    var startDate = document.getElementById("minPrice").value;
+    var endDate = document.getElementById("maxPrice").value;
+
+    // Display the selected dates
+    document.getElementById("selectedDates").textContent =
+      "Selected Dates: " + startDate + " to " + endDate;
+
+    // Serialize the form data
+    var formData = new FormData(form);
+    
+
+    // Send an AJAX request to the server
+    fetch("/filter_salesreport", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.text())
+      .then((data) => {
+        console.log(data,"lkl");
+        // Update the sample table with the retrieved data
+        document.getElementById("sample").innerHTML = data;
+        console.log(data.salesData)
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+</script>

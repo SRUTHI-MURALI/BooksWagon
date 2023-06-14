@@ -1,0 +1,131 @@
+<%- include('header') %>
+
+<!-- breadcrumb part start-->
+<section class="breadcrumb_part">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="breadcrumb_iner">
+            <h2>Order History</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+</section>
+  <!-- breadcrumb part end-->          
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="card">
+          <div class="card-body">
+            <div class="table-responsive">
+              <table id="example3" class="table" style="width:100%">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">order_id</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Details</th>
+                    <th scope="col">Invoice</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% orders.forEach((order,index) => { %>
+                  <tr>
+                    <td><%= index + 1 %></td>
+                    <td><%= order._id %></td>
+                    <td><%= order.status %></td>
+                    <td><%= order.total %></td>
+                    <td>
+                      <% if(order.status == "Pending" ) { %>
+                      <a href="/delete_ordered_item/<%= order._id %>" class="btn">
+                        <span class="text-gradient">
+                          <i class="fa fa-trash" aria-hidden="true"></i>
+                        </span>
+                      </a>
+                      <% } %>
+                      <% if(order.status== "delivered") { %>
+                      <a href="/return_order/<%= order._id %>">
+                        <i class="fa fa-reply"></i>
+                      </a>
+                      <% } %>
+                      <% if(order.status== "cancelled" ) { %>
+                      <a class="btn border-shadow delete">
+                        <i class="fa fa-times"></i>
+                      </a>
+                      <% } %>
+                      <% if(order.status== "Returned") { %>
+                      <a class="btn border-shadow delete">
+                        <i class="fa fa-exclamation" aria-hidden="true"></i>
+                      </a>
+                      <% } %>
+                    </td>
+                    <td>
+                      <a href="/user_order_details/<%= order._id %>">
+                        <button type="submit" class="btn btn-sm btn-info">Details</button>
+                      </a>
+                    </td>
+                    <td>
+                      <a href="/invoice_download/<%= order._id %>">
+                        <button type="submit" class="btn btn-sm btn-info">Download</button>
+                      </a>
+                    </td>
+                  </tr>
+                  <% }); %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>  
+  
+<% if(orders.length==0){ %>
+  <div align="center">
+    <img src="/assets/img/no data.png" alt="#" class="img-fluid">
+  </div>
+  <% } %>
+
+
+<!-- Pagination -->
+<nav aria-label="Pagination">
+    <ul class="pagination justify-content-center mt-4">
+      <% if (currentPage > 1) { %>
+        <li class="page-item">
+          <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+            <span class="sr-only">Previous</span>
+          </a>
+        </li>
+      <% } %>
+      <% if(totalPages>1){ %>
+      <% for (let i = 1; i <= totalPages; i++) { %>
+        <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+          <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+        </li>
+      <% } %>
+      <% } %>
+  
+      <% if (currentPage < totalPages) { %>
+        <li class="page-item">
+          <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+            <span class="sr-only">Next</span>
+          </a>
+        </li>
+      <% } %>
+    </ul>
+  </nav>
+
+    <script>
+        setTimeout(() => {
+            document.getElementById('msg').style.display="none"
+            
+        }, 3000);
+    </script>
+   
+
+<%- include('footer') %>

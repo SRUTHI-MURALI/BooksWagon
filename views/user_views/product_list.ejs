@@ -1,0 +1,208 @@
+<%- include('header') %>
+
+<!-- breadcrumb part start-->
+<section class="breadcrumb_part">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="breadcrumb_iner">
+          <h2>product list</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- breadcrumb part end-->
+
+<!-- product list part start-->
+<div class="container">
+<div class="row">
+
+  <div class="col-lg-8">
+    <button
+    type="submit"
+    class="btn btn-lg btn-info dropdown-toggle ml-5 mt-5"
+    data-toggle="dropdown"
+    aria-expanded="false"
+    aria-labelledby="categoryFilterButton"
+  >
+    Category Filter
+  </button>
+    <div class="dropdown-menu" aria-labelledby="categoryFilterButton">
+   
+      <% category.forEach(function(category) { %>
+        <a class="nav-item nav-link category-filter-item" href="/products_category_filter/<%= category._id %>"
+          data-category="<%= category.category %>">
+          <span class="span"><%= category.category %></span>
+        </a>
+        
+      <% }); %>
+    </div>
+  </div>
+  <div class="col-lg-4 mt-5">
+    <form action="/price_filter" method="get">
+      <label for="minPrice">Min </label>
+      <input
+        type="number"
+        name="minPrice"
+        style="width: 80px"
+        id="minPrice"
+      />
+
+      <label for="maxPrice">Max </label>
+      <input
+        type="number"
+        name="maxPrice"
+        style="width: 80px"
+        id="maxPrice"
+      />
+
+      <button type="submit" class="ml-2 btn-info" style="width: 80px">
+        Price
+      </button>
+    </form>
+  </div> 
+</div>
+<section class="product_list section_padding">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+       
+        <% if(product && product.length>0){ %>
+        <% product.forEach(function(product) { %>
+        <div class="single_product_item">
+          <div class="single_product_item_thumb">
+            <div class="row">
+              <div class="col-lg-4">
+                <a href="/single-product/<%= product._id %>">
+                  <img
+                    style="width: 230px; height: 300px"
+                    src="/<%= product.photo[0] %>"
+                    alt="#"
+                    class="img-fluid"
+                /></a>
+              </div>
+              <form method="post" action="/add_to_wishlist/<%= product._id %>">
+                <input type="hidden" name="id" value="<%= product._id %>" />
+                
+                      <div>
+                        <button type="submit" style="background: none; border: none">
+                          <i class="fas fa-heart" style="color: #dd1604; font-size: 24px"></i>
+                        </button>
+                      </div>
+                     </form>
+              
+              
+
+              <div class="col-lg-6 ml-5">
+                <h3>
+                  <a href="/single-product/<%= product._id %>"
+                    ><%= product.name %></a
+                  >
+                </h3>
+
+                <p id="price" style="color: black">
+                  <%= product.category_name.category %>
+                </p>
+                <% let count = 0 %>
+                <% offer.forEach((offer) => { %>
+                  <% if (offer.category._id.toString() === product.category_name._id.toString()) { %>
+                    <% count++ %>
+                    <p id="price" style="color: rgb(171, 41, 41)">
+                       ₹ <s><%= product.price %></s> <br>
+                      Offer Price ₹ <%= offer.amount %>
+                    </p>
+                  <% } %>
+                <% }) %>
+                
+                <% if (count === 0) { %>
+                  <p id="price" style="color: rgb(171, 41, 41)">
+                    ₹ <%= product.price %>
+                  </p>
+                <% } %>
+
+                <form method="post" action="/get_cart/<%= product._id %>">
+                  <input
+                    type="hidden"
+                    name="price"
+                    value="<%= product.price %>"
+                  />
+                  <input type="hidden" name="quantity" value="1" />
+                  <div class="mt-5">
+                    <button type="submit" class="btn btn-outline-secondary">
+                      Add To Cart
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <% }) %>
+        <% } %>
+        <% if(product.length==0){ %>
+          <div align="center">
+            <img src="/assets/img/no products.jpg" alt="#" class="img-fluid">
+          </div>
+         
+        <% } %>
+        
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+<!-- product list part end-->
+
+
+<!-- Pagination -->
+<nav aria-label="Pagination">
+  <ul class="pagination justify-content-center mt-4">
+    <% if (currentPage > 1) { %>
+      <li class="page-item">
+        <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+          <span class="sr-only">Previous</span>
+        </a>
+      </li>
+    <% } %>
+
+    <% if(totalPages>1){ %>
+      <% for (let i = 1; i <= totalPages; i++) { %>
+        <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+          <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+        </li>
+      <% } %>
+      <% } %>
+
+    <% if (currentPage < totalPages) { %>
+      <li class="page-item">
+        <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+          <span class="sr-only">Next</span>
+        </a>
+      </li>
+    <% } %>
+  </ul>
+</nav>
+
+
+<%- include('footer') %>
+
+<script>
+  $(document).ready(function(){
+   
+    document.querySelectorAll(".category-filter-item").forEach(function(item) {
+    
+  item.addEventListener("click", function() {
+    const selectedCategory = item.dataset.category; // Get the selected category from the dataset attribute
+    
+    const categoryFilterButton = document.getElementById("categoryFilterButton");
+    categoryFilterButton.innerText = selectedCategory; // Update the button text with the selected category
+   
+  });
+});
+  })
+  
+</script>

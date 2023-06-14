@@ -1,0 +1,201 @@
+<%- include('header') %>
+
+<!-- Table Start -->
+<div class="container-fluid pt-4 px-4">
+  <div class="row g-4">
+    <form
+      class="d-none d-md-flex ms-0"
+      action="/search_admin_user"
+      method="GET"
+    >
+      <input
+        class="form-control bg-white"
+        name="name"
+        type="search"
+        placeholder="Search"
+      />
+    </form>
+   
+      
+        <div class=" ">
+          <!-- product.ejs -->
+          <form action="/filter_orders" method="get">
+            <label for="minPrice">Min Price:</label>
+            <input type="number" name="minPrice" style="width: 100px" id="minPrice"  />
+
+            <label for="maxPrice">Max Price:</label>
+            <input type="number" name="maxPrice" style="width: 100px" id="maxPrice" />
+
+            
+            
+            <button type="submit" class="ml-2 btn-info" style="width: 100px">Filter</button>
+          </form>
+        </div>
+      
+    <div class="col-12">
+      <!-- <% if(locals.msg) { %>
+      <div id="msg" class="alert alert-success"><%- locals.msg -%></div>
+      <%}%> -->
+      <div class="bg-secondary rounded h-100 p-4">
+        <h6 class="mb-4">Order Details</h6>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">order_id</th>
+
+                <th scope="col">Customer</th>
+                <th scope="col">Email</th>
+                <th scope="col">Status</th>
+                <th scope="col">Price</th>
+
+                <th scope="col"> Status Update</th>
+                <th scope="col">Details</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <% orders.forEach((order, index) => { %>
+                <tr>
+                  <td><%= index + 1 %></td>
+                  <td><%= order._id %></td>
+                  <td><%= order.user.name %></td>
+                  <td><%= order.user.email %></td>
+                  <td><%= order.status %></td>
+                  <td><%= order.total %></td>
+                  <td>
+                    <% if(order.status === 'Pending' ){ %>
+                    <a
+                      href=""
+                      class="btn border-shadow update"
+                      data-bs-toggle="modal"
+                      data-bs-target="#exampleModal<%= index %>"
+                    >
+                      <span class="text-gradient"
+                        ><i class="fas fa-pencil-alt"></i
+                      ></span>
+                    </a>
+                    <% } if(order.status =='Return') { %>
+                      
+                        <a
+                        class="btn border-shadow update"
+                        href="/refund_order/<%= order._id %>">
+                            <i class='fa fa-reply'></i>
+                        </a>
+                    
+                      <% } if(order.status=='Refunded' || order.status=='cancelled'){ %>
+                        <a
+                        class="btn border-shadow update"
+                        href="">
+                        <i class="fa fa-times" ></i>
+                        </a>
+                        <%} if( order.status== 'delivered') { %>
+                          <a
+                        class="btn border-shadow update"
+                        href="">
+                        <i class='fa fa-check'></i>
+                        </a>
+                        <%} if( order.status== 'Returned') { %>
+                          <a
+                        class="btn border-shadow update"
+                        href="">
+                        <i class="fa fa-exclamation" aria-hidden="true"></i>
+                        </a>
+                        <% } %>
+                  </td>
+                  <td>
+                    <a href="/order_details/<%= order._id %>"><button type="submit">Details</button></a>
+                  </td>
+                </tr>
+                <!-- Modal -->
+                <div
+                  class="modal fade"
+                  id="exampleModal<%= index %>"
+                  tabindex="-1"
+                  role="dialog"
+                  aria-labelledby="exampleModalLabel"
+                  aria-hidden="true"
+                >
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                        <button
+                          type="button"
+                          class="close"
+                          data-bs-dismiss="modal"
+                          aria-label="Close"
+                        >
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <form action="/admin/order/edit_status/<%= order._id %>" method="post">
+                          <select name="status">
+                            <option value="Pending" <% if(order.status=== "pending") { %>selected<% } %>>Pending</option>
+                            <option value="delivered" <% if(order.status=== "delivered") { %>selected<% } %>>Delivered</option>
+                            <option value="cancelled" <% if(order.status=== "cancelled") { %>selected<% } %>>Cancelled</option>
+                            <option value="Return" <% if(order.status=== "Return") { %>selected<% } %>>Return</option>
+                          </select>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                      </div>
+                    </form>
+                    </div>
+                  </div>
+                </div>
+              <% }) %>
+            </tbody>
+           </table>
+          </div>
+      </div> 
+      </div>
+       <!-- Pagination -->
+       <nav aria-label="Pagination">
+        <ul class="pagination justify-content-center mt-4">
+          <% if (currentPage > 1) { %>
+            <li class="page-item">
+              <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+                <span class="sr-only">Previous</span>
+              </a>
+            </li>
+          <% } %>
+
+          <% if(totalPages>1){ %>
+            <% for (let i = 1; i <= totalPages; i++) { %>
+              <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+              </li>
+            <% } %>
+            <% } %>
+
+          <% if (currentPage < totalPages) { %>
+            <li class="page-item">
+              <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+                <span class="sr-only">Next</span>
+              </a>
+            </li>
+          <% } %>
+        </ul>
+      </nav>
+
+
+
+
+
+
+
+<!-- Table End -->
+
+<!-- <script>
+  setTimeout(() => {
+    document.getElementById("msg").style.display = "none";
+  }, 1000);
+</script> -->
+
+<%- include('footer') %>

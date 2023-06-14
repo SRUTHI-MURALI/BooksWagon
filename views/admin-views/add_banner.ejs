@@ -1,0 +1,61 @@
+<%- include('header') %>
+
+<!-- Form Start -->
+<div class="container-fluid pt-4 px-4">
+  <div class="row g-4 align-items-center justify-content-center mt-5">
+    <div class="col-sm-12 col-xl-6">
+      <div class="bg-secondary rounded h-100 p-4">
+        <h6 class="mb-4">Add Banner</h6>
+        <form
+          action="/add_banner_submit"
+          multiple
+          method="POST"
+          name="login_form"
+          enctype="multipart/form-data"
+          onsubmit="return  validateForm()"
+        >
+          
+          
+          
+         
+
+          <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label" required
+              >photo</label
+            >
+            <input
+              type="file"
+              class="form-control-file"
+              id="photo"
+              multiple
+              name="photo"
+            />
+          </div>
+
+          
+
+          <button type="submit" value="upload" class="btn btn-primary mt-5">
+            Add Banner
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Form End -->
+
+<script>
+  function validateForm() {
+    
+    var photo = document.forms["login_form"]["photo"].value;
+   
+    if (photo == "" ) {
+      alert("Please fill in all fields.");
+      return false;
+    }
+
+   
+}
+</script>
+
+<%- include('footer') %>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zxx">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Books Wagon</title>
+    <link rel="icon" href="/assets/img/logo-new" />
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css" />
+    <!-- animate CSS -->
+    <link rel="stylesheet" href="/assets/css/animate.css" />
+    <!-- owl carousel CSS -->
+    <link rel="stylesheet" href="/assets/css/owl.carousel.min.css" />
+    <!-- font awesome CSS -->
+    <link rel="stylesheet" href="/assets/css/all.css" />
+    <!-- flaticon CSS -->
+    <link rel="stylesheet" href="/assets/css/flaticon.css" />
+    <link rel="stylesheet" href="/assets/css/themify-icons.css" />
+    <!-- font awesome CSS -->
+    <link rel="stylesheet" href="/assets/css/magnific-popup.css" />
+    <!-- swiper CSS -->
+    <link rel="stylesheet" href="/assets/css/slick.css" />
+    <!-- style CSS -->
+    <link rel="stylesheet" href="/assets/css/style.css" />
+  </head>
+
+  <body>
+    <!--::header part start::-->
+    <header class="main_menu home_menu">
+      <div class="container">
+        <div class="row align-items-center justify-content-center">
+          <div class="col-lg-12">
+            <nav class="navbar navbar-light h-25">
+              <a class="navbar-brand" href="/">
+                <img src="/assets/img/logo-new.png" alt="logo" />
+              </a>
+
+              <a href="/login"
+                ><button
+                  style="background-color: rgb(24, 213, 172)"
+                  class="btn my-2 my-sm-0"
+                  type="submit"
+                >
+                  Register/login
+                </button></a
+              >
+            </nav>
+          </div>
+        </div>
+        <% if(locals.msg) { %>
+          <div id="msg" class="alert alert-success "><%- locals.msg -%></div>
+          <%}%>
+      </div>
+    </header>
+    <!-- Header part end-->
+    <!-- banner part start-->
+    <section class="banner_part">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-md-5">
+            <div class="banner_text">
+              <div class="banner_text_iner">
+                <a href="/login" class="btn_1">shop now</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="banner_img">
+        <img src="/assets/img/img3.jpg" alt="#" class="img-fluid" />
+        <img
+          src="/assets/img/banner_pattern.png "
+          alt="#"
+          class="pattern_img img-fluid"
+        />
+      </div>
+    </section>
+    <!-- banner part start-->
+
+    <!-- product list start-->
+    <section class="single_product_list">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="single_product_iner">
+              <div class="row align-items-center justify-content-between">
+                <div class="col-lg-6 col-sm-6">
+                  <div class="single_product_img">
+                    <img src="/assets/img/img2.jpg" class="img-fluid" alt="#" />
+                    <img
+                      src="/assets/img/product_overlay.png"
+                      alt="#"
+                      class="product_overlay img-fluid"
+                    />
+                  </div>
+                </div>
+                <div class="col-lg-5 col-sm-6">
+                  <div class="single_product_content">
+                    <a href="/login" class="btn_3">Explore Now</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="single_product_iner">
+              <div class="row align-items-center justify-content-between">
+                <div class="col-lg-6 col-sm-6">
+                  <div class="single_product_img">
+                    <img src="/assets/img/img1.jpg" class="img-fluid" alt="#" />
+                    <img
+                      src="/assets/img/product_overlay.png"
+                      alt="#"
+                      class="product_overlay img-fluid"
+                    />
+                  </div>
+                </div>
+                <div class="col-lg-5 col-sm-6">
+                  <div class="single_product_content">
+                    <a href="/login" class="btn_3">Explore Now</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="single_product_iner">
+              <div class="row align-items-center justify-content-between">
+                <div class="col-lg-6 col-sm-6">
+                  <div class="single_product_img">
+                    <img src="/assets/img/img4.jpg" class="img-fluid" alt="#" />
+                    <img
+                      src="/assets/img/product_overlay.png"
+                      alt="#"
+                      class="product_overlay img-fluid"
+                    />
+                  </div>
+                </div>
+                <div class="col-lg-5 col-sm-6">
+                  <div class="single_product_content">
+                    <a href="/login" class="btn_3">Explore Now</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- product list end-->
+
+    <!-- trending item start-->
+    <section class="trending_items">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="section_tittle text-center">
+              <h2>Trending Items</h2>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <% product.forEach(function(product) { %>
+
+          <div class="col-lg-4 col-sm-6">
+            <div class="single_product_item">
+              <div class="single_product_item_thumb">
+                <img
+                  style="height: 200px"
+                  src="<%= product.photo %>"
+                  alt="#"
+                  class="img-fluid"
+                />
+              </div>
+              <h3><a href="/single-product"><%= product.name %></a></h3>
+              <p><%= product.price %></p>
+            </div>
+          </div>
+          <% }); %>
+        </div>
+      </div>
+    </section>
+    <!-- trending item end-->
+
+    <!-- feature part here -->
+    <section class="feature_part section_padding">
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col-lg-6">
+            <div class="feature_part_tittle">
+              <h3>
+                Credibly innovate granular internal or organic sources whereas
+                standards.
+              </h3>
+            </div>
+          </div>
+          <div class="col-lg-5">
+            <div class="feature_part_content">
+              <p>
+                Seamlessly empower fully researched growth strategies and
+                interoperable internal or “organic” sources. Credibly innovate
+                granular internal or “organic” sources whereas high standards in
+                web-readiness.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-lg-3 col-sm-6">
+            <div class="single_feature_part">
+              <img src="/assets/img/icon/feature_icon_1.svg" alt="#" />
+              <h4>Credit Card Support</h4>
+            </div>
+          </div>
+          <div class="col-lg-3 col-sm-6">
+            <div class="single_feature_part">
+              <img src="/assets/img/icon/feature_icon_2.svg" alt="#" />
+              <h4>Online Order</h4>
+            </div>
+          </div>
+          <div class="col-lg-3 col-sm-6">
+            <div class="single_feature_part">
+              <img src="/assets/img/icon/feature_icon_3.svg" alt="#" />
+              <h4>Free Delivery</h4>
+            </div>
+          </div>
+          <div class="col-lg-3 col-sm-6">
+            <div class="single_feature_part">
+              <img src="/assets/img/icon/feature_icon_4.svg" alt="#" />
+              <h4>Product with Gift</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- feature part end -->
+
+    <!-- subscribe part here -->
+    <section class="subscribe_part section_padding">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-12">
+            <div class="subscribe_part_content">
+              <img
+                src="/assets/img/footer/81_inr.png"
+                alt="#"
+                class="img-fluid"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- subscribe part end -->
+
+    <%- include('footer') %>
+  </body>
+</html>
+
+<script>
+  setTimeout(() => {
+
+      document.getElementById('msg').style.display="none"
+      
+  }, 3000);
+</script>

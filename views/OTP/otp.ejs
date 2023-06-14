@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Page</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <style>
+        body {
+	background: rgb(150, 150, 205)
+}
+
+.otp-form .otp-field {
+	display: inline-block;
+	width: 4rem;
+	height: 4rem;
+	font-size: 2rem;
+	line-height: 4rem;
+	text-align: center;
+	border: none;
+	border-bottom: 2px solid var(--bs-secondary);
+	outline: none;
+}
+
+.otp-form .otp-field:focus {
+	border-bottom-color: var(--bs-dark);
+}
+
+    </style>
+</head>
+<body>
+    <div class="container ">
+        <div class="row justify-content-center align-items-center vh-100">
+            <% if(locals.message) { %>
+                <div id="msg" class="alert alert-danger"><%- locals.message -%></div>
+                <%}%>
+            <div class="card col-12 col-md-8 col-lg-7 p-4">
+                <div class="card-body  bg-info">
+                    <h4 class="card-title text-center">OTP Verificattion</h4>
+                    <div class="card-text text-center mt-5">
+                        <form action="/verifyOTP" method="POST" class="otp-form">
+                            <input class="otp-field" type="text" name="a" maxlength=1>
+                            <input class="otp-field" type="text" name="b" maxlength=1>
+                            <input class="otp-field" type="text" name="c" maxlength=1>
+                            <input class="otp-field" type="text" name="d" maxlength=1>
+                            <input class="otp-field" type="text" name="e" maxlength=1>
+                            <input class="otp-field" type="text" name="f" maxlength=1>
+							
+
+							<div class="mb-3">
+								<label for="exampleInputPassword1" class="form-label">phone</label>
+								<input
+								  type="tel"
+								  class="form-control"
+								  name="phone"  
+								  id="exampleInputPassword1"
+								/>
+							  </div>
+                            <!-- Store OTP Value -->
+                            <input class="otp-value" type="hidden" name="otp-value">
+                            
+                         
+                            <div class="d-block mt-4">
+                                <button class="btn btn-primary" type="submit">Verify</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<script>
+    $(document).ready(function () {
+	$(".otp-form *:input[type!=hidden]:first").focus();
+	let otp_fields = $(".otp-form .otp-field"),
+		otp_value_field = $(".otp-form .otp-value");
+	otp_fields
+		.on("input", function (e) {
+			$(this).val(
+				$(this)
+					.val()
+					.replace(/[^0-9]/g, "")
+			);
+			let opt_value = "";
+			otp_fields.each(function () {
+				let field_value = $(this).val();
+				if (field_value != "") opt_value += field_value;
+			});
+			otp_value_field.val(opt_value);
+		})
+		.on("keyup", function (e) {
+			let key = e.keyCode || e.charCode;
+			if (key == 8 || key == 46 || key == 37 || key == 40) {
+				// Backspace or Delete or Left Arrow or Down Arrow
+				$(this).prev().focus();
+			} else if (key == 38 || key == 39 || $(this).val() != "") {
+				// Right Arrow or Top Arrow or Value not empty
+				$(this).next().focus();
+			}
+		})
+		.on("paste", function (e) {
+			let paste_data = e.originalEvent.clipboardData.getData("text");
+			let paste_data_splitted = paste_data.split("");
+			$.each(paste_data_splitted, function (index, value) {
+				otp_fields.eq(index).val(value);
+			});
+		});
+});
+
+</script>
+</body>
+</html>

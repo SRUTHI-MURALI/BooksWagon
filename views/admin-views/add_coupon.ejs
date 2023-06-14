@@ -1,0 +1,82 @@
+<%- include('header') %>
+
+<!-- Form Start -->
+<div class="container-fluid pt-4 px-4">
+  <div class="row g-4 align-items-center justify-content-center mt-5">
+    <div class="col-sm-12 col-xl-6">
+      <div class="bg-secondary rounded h-100 p-4">
+        <h6 class="mb-4">Add Coupon</h6>
+        <form
+          action="/add_coupon_submit"
+          multiple
+          method="POST"
+          name="login_form"
+          
+         
+        >
+          <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Coupon Code</label>
+            <input
+              type="text"
+              class="form-control"
+              name="coupon"
+              id="exampleInputPassword1"
+            />
+          </div>
+          
+          <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Expiry Date</label>
+            <input
+              type="date"
+              class="form-control"
+              name="expiry"
+              id="exampleInputPassword1"
+              min="1"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Discount</label>
+            <input
+              type="number"
+              class="form-control"
+              name="discount"
+              id="exampleInputPassword1"
+              min="1"
+              required
+            />
+          </div>
+          <button type="submit" value="upload" class="btn btn-primary mt-5">
+            Add Coupon
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Form End -->
+
+<script>
+  function validateForm() {
+    var coupon = document.forms["login_form"]["coupon"].value;
+    var expiry = document.forms["login_form"]["expiry"].value;
+    var discount = parseFloat(document.forms["login_form"]["discount"].value);
+    var status = parseFloat(document.forms["login_form"]["status"].value);
+
+    if (coupon.trim() == "" || expiry == "" || discount.trim() == "" || status.trim() == "") {
+      alert("Please fill in all fields.");
+      return false;
+    }
+
+    // Validate name
+    var nameRegex = /^[A-Za-z\s]+$/;
+    if (!nameRegex.test(name)) {
+      alert("Name should only contain letters and spaces.");
+      return false;
+    }
+
+    return true;
+  }
+</script>
+
+<%- include('footer') %>

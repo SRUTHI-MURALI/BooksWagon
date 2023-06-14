@@ -1,0 +1,370 @@
+<%- include('header') %>
+
+<!-- breadcrumb part start-->
+<section class="organic-breadcrumb">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-5"></div>
+      <div class="col-lg-7 mt-5  ">
+        <div class="breadcrumb_iner">
+          <h2>checkout</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- breadcrumb part end-->
+
+<!--================Checkout Area =================-->
+<section class="checkout_area section_padding">
+  <div class="container">
+    <div class="billing_dails">
+      <div class="row">
+        <div class="col-lg-7">
+          <div class="order_box">
+            <h5>Address Details</h5>
+            <hr class="divider">
+            <p><%= specifiedAddress.name %></p>
+            <p><%= specifiedAddress.add1 %>, <%= specifiedAddress.add2 %></p>
+            <p><%= specifiedAddress.city %></p>
+            <p><%= specifiedAddress.pin_number %></p>
+            <p><%= specifiedAddress.phone %></p>
+            <p><%= specifiedAddress.email %></p>
+          </div>
+          <p style="font-weight: bold; color: black;">Coupons for you</p>
+          <div class="order_box">
+            <div class="row">
+              <h5 class="col-lg-5">Coupon Code</h5>
+              <h5 class="col-lg-5">Amount</h5>
+            </div>
+            <div style="max-height: 200px; overflow-y: scroll; overflow-x: hidden; ">
+              <div class="row">
+                <% couponfind.forEach(function(coupon, index) { %>
+                  <div class="payment_item mt-3 col-lg-5">
+                    <div class="radion_btn">
+                      <input type="radio" id="coupon<%= index %>" name="coupon" value="<%= coupon %>" required onchange="handleRadioChange(event)" />
+                      <label for="coupon<%= index %>">
+                        <%= coupon %>
+                      </label>
+                      <div class="check"></div>
+                    </div>
+                  </div>
+                  <div class="mt-3 col-lg-5">
+                    <label>
+                      <%= discount[index] %>
+                    </label>
+                    <div class="check"></div>
+                  </div>
+                <% }); %>
+              </div>
+            </div>
+            
+            <div id="couponMessage" style="padding-bottom: 10px; color: rgb(58, 139, 0);"></div>
+            <button type="button" onclick="redeem()" class="btn btn-primary ml-auto mt-4 mr-5" style="margin-bottom: 30px;">Redeem</button>
+           <i id="deleteCoupon" class=" ml-5 mt-4 " style="margin-bottom: 30px;" onclick="deleteCoupon()">  </i>
+          </div>  
+        </div>
+        <div class="col-lg-5">
+          <div class="order_box">
+            <h2>Your Order</h2>
+            <ul class="list">
+              <li>
+                <a href="#">
+                  Product
+                  <span>Total</span>
+                </a>
+              </li>
+              <% cart.items.forEach(function(product) { %>
+                <li>
+                  <a href="#">
+                    <%= product.product.name %>
+                    <span class="middle "> <%= product.price %> x <%= product.quantity %></span>
+                
+                    <span class="last item-total "><%= product.price * product.quantity %></span> <span> &nbsp ₹ &nbsp</span> 
+                  </a>
+                </li>
+              <% }); %>
+            </ul>
+            <ul class="list list_2">
+              <li>
+                <a href="#">
+                  Total
+                  <span id="subtotal"> </span><span> &nbsp ₹ &nbsp</span> 
+                </a>
+              </li>             
+             <li>
+              <a href="#">
+              <button type="submit" class="btn btn-secondary btn-sm" onclick="walletPay()">Wallet Amount</button>
+              <span  id="wallet"></span> 
+              <i id="wallet_remove" onclick="deleteWallet()">
+                <span></span>
+              </i>
+            </a>
+          
+            
+            </li>
+            <li>
+              <a href="#">
+              <button type="button" class="btn btn-secondary btn-sm" id="couponShow">Coupon</button>
+              <span id="couponAmtShow"></span>
+              
+            </a>
+          
+            
+            </li>
+            
+            <li>  
+              <a href="#">
+                Shipping
+                <span> 50.00</span><span> &nbsp + ₹ &nbsp</span> 
+              </a>
+            </li>
+              <li>
+               
+                <a href="#">
+                  SubTotal
+                  
+                  <span id="totalPrice"> </span><span> &nbsp ₹ &nbsp</span> 
+                </a>
+              </li>
+              
+            </ul>
+           
+            <form action="/add_order/<%= specifiedAddress._id %>" method="post">
+              <div class="payment_item">
+                <div class="radion_btn">
+                  <input type="radio" id="f-option5" checked="checked" name="payment_method" value="cod" required />
+                  <label for="f-option5">Cash on Delivery</label>
+                  <div class="check"></div>
+                </div>
+                
+                <div  class="radion_btn">
+                  <input type="radio" id="f-option6" name="payment_method" value="paypal" required />
+                  <label for="f-option6">Paypal</label>
+                  <div class="check"></div>
+                </div>
+  
+                <div class="creat_account">
+                  <input type="checkbox" id="f-option4" name="selector" required />
+                  <label for="f-option4">I've read and accept the</label>
+                  <a href="#">terms & conditions*</a>
+                  <div class="check"></div>
+                </div>
+            
+              <button class="btn-lg btn-block btn_3" type="submit" onclick="validateForm(event)">Proceed</button>
+              </div>
+            </form>
+           
+           
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!--================End Checkout Area =================-->
+
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+
+
+<script>
+  function validateForm(event) {
+    const cashOnDelivery = document.getElementById('f-option5');
+    const termsCheckbox = document.getElementById('f-option4');
+    const paypal = document.getElementById('f-option6');
+    const wallet = document.getElementById('f-option7');
+    if (!cashOnDelivery.checked && !paypal.checked && !wallet.checked) {
+      event.preventDefault(); // Prevent form submission
+      alert('Please select a payment method.'); // Show an error message or perform any necessary action
+    } else if (!termsCheckbox.checked) {
+      event.preventDefault(); // Prevent form submission
+      alert('Please accept the terms and conditions.'); // Show an error message or perform any necessary action
+    }
+  }
+</script>
+
+<script>
+  const setSubtotal = () => {
+    const itemTotal = document.getElementsByClassName('item-total');
+    let subtotal = 0;
+    for (let i = 0; i < itemTotal.length; i++) {
+      subtotal += Number(itemTotal[i].innerHTML);
+    }
+    document.getElementById('subtotal').innerHTML = ` ${subtotal}`;
+  }
+
+  setSubtotal();
+
+  const setTotal = () => {
+    const itemTotal = document.getElementsByClassName('item-total');
+    let subtotal = 50;
+    for (let i = 0; i < itemTotal.length; i++) {
+      subtotal += Number(itemTotal[i].innerHTML);
+    }
+    document.getElementById('totalPrice').innerHTML = ` ${subtotal}`;
+  }
+
+  setTotal();
+
+  
+  function walletPay(){
+     
+     $.ajax({
+         url:"/walletpay_initiate",
+       type:"post",
+       
+      
+       success:function(data){
+
+       
+         if(data.success){
+           
+           // const cartItem=document.querySelector(`tr[data-item-id="${userId}"]`)
+           
+           setNewTotal(data.walletBalance);
+           
+           
+         }else{
+           console.log('error');
+         }
+ 
+       }	
+     })
+    
+   }
+
+
+   const setNewTotal = (walletBalance) => {
+    const itemTotal = document.getElementsByClassName('item-total');
+    let total = 0;
+    for (let i = 0; i < itemTotal.length; i++) {
+      total += Number(itemTotal[i].innerHTML);
+    }
+    let sum= (10/100)*total
+    if(walletBalance>sum){
+      newtotal=(total-sum) +50
+    }else{
+     return alert('wallet Amount insufficient')
+    }
+    
+  document.getElementById('wallet').innerHTML = `- ₹ ${sum}`;
+  document.getElementById('wallet_remove').innerHTML = `<i class="fa fa-times"></i>`;
+  document.getElementById('wallet').style.display = 'block';
+  document.getElementById('wallet_remove').style.display = 'inline';
+    
+  
+    document.getElementById('totalPrice').innerHTML = ` ${newtotal}`;
+  }
+
+  function deleteWallet(){
+     
+     $.ajax({
+         url:"/delete_wallet",
+       type:"post",
+       
+       success:function(data){
+       
+         if(data.success){
+          document.getElementById('wallet').style.display = 'none';
+          document.getElementById('wallet_remove').style.display = 'none';
+
+           
+           // const cartItem=document.querySelector(`tr[data-item-id="${userId}"]`)
+           
+           setTotal();
+
+           
+           
+         }else{
+           console.log('error');
+         }
+ 
+       }	
+     })
+   }
+
+
+</script>
+
+
+<script>
+  var selectedCoupon = null;
+
+  function handleRadioChange(event) {
+    selectedCoupon = event.target.value;
+  }
+
+  function redeem() {
+    var formData = {
+      coupon: selectedCoupon 
+    };
+
+    $.ajax({
+      url: "/redeem_coupon",
+      type: "POST",
+      data: formData,
+      success: function(response) {
+       
+        handleCouponResponse(response);
+      },
+      error: function(xhr, status, error) {
+        console.error('Coupon request failed. Status:', status);
+      }
+    });
+  }
+
+  function handleCouponResponse(response) {
+    var couponMessage = document.getElementById('couponMessage');
+    var couponCodeInput = document.getElementById('couponCode');
+    var totalElement = document.getElementById('totalPrice');  
+
+    if (response.success) {
+     
+      var couponValue = response.amount;
+     
+      var total = parseFloat(totalElement.textContent);
+      
+      var updatedTotal = total - couponValue;    
+   
+      document.getElementById('totalPrice').innerHTML =  ` ${updatedTotal}`; 
+      document.getElementById('couponMessage').textContent = response.message; 
+      
+      document.getElementById('couponAmtShow').innerHTML = `- ₹ ${couponValue}`; 
+      document.getElementById('couponAmtShow').style.display = 'block'; 
+      
+      document.getElementById('deleteCoupon').innerHTML = `<button class="btn btn-danger" >Delete</button>`;
+        document.getElementById('deleteCoupon').style.display = 'inline';
+    } else {
+      // Coupon is not available or there was an error
+      document.getElementById('couponMessage').textContent = response.message; 
+    }
+  }
+
+  function deleteCoupon(){
+     
+     $.ajax({
+         url:"/delete_coupon",
+       type:"post",
+       
+       success:function(data){
+       
+         if(data.success){
+          document.getElementById('couponAmtShow').style.display = 'none';
+          document.getElementById('deleteCoupon').style.display = 'none';
+          document.getElementById('totalPrice').innerHTML =  data.totalPrice; 
+           
+           
+           
+         }else{
+           console.log('error');
+         }
+ 
+       }	
+     })
+   }
+
+</script>
+
+<%- include('footer') %>

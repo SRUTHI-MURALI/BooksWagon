@@ -1,0 +1,119 @@
+<%- include('header') %>
+
+<!-- Form Start -->
+<div class="container-fluid pt-4 px-4">
+  <div class="row g-4 align-items-center justify-content-center mt-5">
+    <div class="col-sm-12 col-xl-6">
+      <div class="bg-secondary rounded h-100 p-4">
+        <h6 class="mb-4">Add Product</h6>
+        <form
+          action="/add_product_submit"
+          multiple
+          method="POST"
+          name="login_form"
+          enctype="multipart/form-data"
+          onsubmit="return  validateForm()"
+        >
+          <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Name</label>
+            <input
+              type="text"
+              class="form-control"
+              name="name"
+              id="exampleInputPassword1"
+            />
+          </div>
+          
+          <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">price</label>
+            <input
+              type="number"
+              class="form-control"
+              name="price"
+              id="exampleInputPassword1"
+              min="1"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Stock</label>
+            <input
+              type="number"
+              class="form-control"
+              name="stock"
+              id="exampleInputPassword1"
+              min="1"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Description</label>
+            <input
+              type="text"
+              class="form-control"
+              name="description"
+              id="exampleInputPassword1"
+             
+              
+            />
+          </div>
+
+          <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label" required
+              >photo</label
+            >
+            <input
+              type="file"
+              class="form-control-file"
+              id="photo"
+              multiple
+              name="photo"
+            />
+          </div>
+
+          <div class="form-group dropdown mt-4">
+            <button type="button" class="btn btn-light" data-toggle="dropdown">
+              Categories
+              <select class="sample category-cell" name="category">
+                <% data.forEach(product => { %>
+                <option value="<%= product._id %>">
+                  <%= product.category %>
+                </option>
+                <%});%>
+              </select>
+            </button>
+          </div>
+
+          <button type="submit" value="upload" class="btn btn-primary mt-5">
+            Add Product
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Form End -->
+
+<script>
+  function validateForm() {
+    var name = document.forms["login_form"]["name"].value;
+    var photo = document.forms["login_form"]["photo"].value;
+    var price = parseFloat(document.forms["login_form"]["price"].value);
+
+    if (name.trim() == "" || photo == "" || price.trim() == "") {
+      alert("Please fill in all fields.");
+      return false;
+    }
+
+    // Validate name
+    var nameRegex = /^[A-Za-z\s]+$/;
+    if (!nameRegex.test(name)) {
+      alert("Name should only contain letters and spaces.");
+      return false;
+    }
+
+    return true;
+  }
+</script>
+
+<%- include('footer') %>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Books Wagon</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.dataTables.min.css">
+<!-- DataTables CSS -->
+<link rel="stylesheet"
+href=
+"https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css">
+
+<!-- DataTables JS -->
+<script src=
+"https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js">
+</script>
+
+
+    <!-- Favicon -->
+    <link href="/assets/img/logo-new.png" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Roboto:wght@500;700&display=swap" rel="stylesheet"> 
+    
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="/admin_assets/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="/admin_assets/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="/admin_assets/css/style.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.min.css">
+   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.5/dist/sweetalert2.all.min.js"></script>
+    
+</head>
+
+<body>
+    <div class="container-fluid position-relative d-flex p-0">
+       
+<div class="sidebar pe-4 pb-3">
+    <nav class="navbar bg-secondary navbar-dark">
+        <a href="/admin_index" class="navbar-brand mx-4 mb-3">
+            <img src="/assets/img/logo-new.png"></img>
+        </a>
+        <div class="d-flex align-items-center ms-4 mb-4">
+            <div class="position-relative">
+                <img class="rounded-circle" src="/admin_assets/img/admin.JPG" alt="" style="width: 40px; height: 40px;">
+                <div class="bg-success rounded-circle border border-2 border-white position-absolute end-0 bottom-0 p-1"></div>
+            </div>
+            <div class="ms-3">
+                <h6 class="mb-0 text-danger">Sruthi</h6>
+                <span>Admin</span>
+            </div>
+        </div>
+        <div class="navbar-nav w-100 app-menu">
+            <a href="/admin_index" class="nav-item nav-link  "><i class="fa fa-tachometer-alt me-2"></i>Dashboard</a>
+            <a href="/sales_report" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Sales Report</a>
+            <a href="/category" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Category</a>
+            <a href="/product" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>Product</a>
+            <a href="/user" class="nav-item nav-link"><i class="fa fa-table me-2"></i>User</a> 
+            <a href="/order" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Order</a>
+            <a href="/coupon" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Coupon</a>
+            <a href="/offer" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Offers</a>
+            <a href="/banner" class="nav-item nav-link"><i class="fa fa-chart-bar me-2"></i>Banner</a>       
+                   
+                </div>
+            </nav>
+        </div>
+        <!-- Sidebar End -->
+
+         <!-- Content Start -->
+         <div class="content">
+            <!-- Navbar Start -->
+            <nav class="navbar navbar-expand bg-secondary navbar-dark sticky-top px-4 py-0">
+                <a href="/admin_index" class="navbar-brand d-flex d-lg-none me-4">
+                    <h2 class="text-primary mb-0"><i class="fa fa-user-edit"></i></h2>
+                </a>
+                <a href="#" class="sidebar-toggler flex-shrink-0">
+                    <i class="fa fa-bars"></i>
+                </a>
+                <% if(locals.pagename) { %>
+               
+                    <h5  class="d-none d-md-flex ms-4" style="font-style: italic;font-family: 'Times New Roman', Times, serif; color: rgb(241, 4, 8);"  > <%- locals.pagename -%></h5>
+                   
+                
+
+                <% } %>
+
+                <div class="navbar-nav align-items-center ms-auto">
+                    
+                        
+                        
+                    <div class="nav-item dropdown">
+                        <a href="/logout" class="nav-link " >
+                            <img class="rounded-circle me-lg-2" src="/admin_assets/img/admin.JPG" alt="" style="width: 40px; height: 40px;">
+                            <span class="d-none d-lg-inline-flex">Logout</span>
+                        </a>
+                       
+                    </div>
+                </div>
+            </nav>
+            <!-- Navbar End -->
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script>
+                $(document).ready(function () {
+                    // Get the current route
+                    var currentRoute = window.location.pathname;
+                    
+                    // Loop through each navigation link
+                    $('.app-menu .nav-link').each(function () {
+                        // Check if the link href matches the current route
+                        if ($(this).attr('href') === currentRoute) {
+                            // Add the 'active' class to the link
+                            $(this).addClass('active');
+                        } else {
+                            // Remove the 'active' class from other links
+                            $(this).removeClass('active');
+                        }
+                    });
+                });
+            </script>
+            
