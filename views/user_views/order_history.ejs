@@ -24,7 +24,7 @@
                   <tr>
                     <th scope="col">#</th>
                     <th scope="col">order_id</th>
-                    <th scope="col">Status</th>
+                    <th scope="col"> Current Status</th>
                     <th scope="col">Price</th>
                     <th scope="col">Status</th>
                     <th scope="col">Details</th>
@@ -41,24 +41,53 @@
                     <td>
                       <% if(order.status == "Pending" ) { %>
                       <a href="/delete_ordered_item/<%= order._id %>" class="btn">
-                        <span class="text-gradient">
-                          <i class="fa fa-trash" aria-hidden="true"></i>
+                        <span data-toggle="tooltip" data-placement="bottom" title="cancel order" class="text-gradient">
+                          <button class="btn btn-sm btn-info">
+                          <i class="fa fa-trash" aria-hidden="true"></i> Cancel 
+                          </button>
+                          
                         </span>
                       </a>
                       <% } %>
                       <% if(order.status== "delivered") { %>
-                      <a href="/return_order/<%= order._id %>">
-                        <i class="fa fa-reply"></i>
+                      <a   href="/return_order/<%= order._id %>" class="btn">
+                        <span data-toggle="tooltip" data-placement="bottom" title="return order" class="text-gradient">
+                          <button class="btn btn-sm btn-info">
+                        <i class="fa fa-reply-all"></i> &nbsp; &nbsp; Return</button>
+                       
+                        </span>
+                        
                       </a>
                       <% } %>
                       <% if(order.status== "cancelled" ) { %>
-                      <a class="btn border-shadow delete">
-                        <i class="fa fa-times"></i>
+                      <a href="" class="btn border-shadow delete" class="btn">
+                        <span data-toggle="tooltip" data-placement="bottom" title="order cancelled" class="text-gradient">
+                          <button class="btn btn-sm btn-info">
+                            <i class="fa fa-times"></i> Cancelled
+                          </button> 
+                         
+                        </span>
+                        
                       </a>
                       <% } %>
+                      <% if(order.status== "Return" ) { %>
+                        <a href="" class="btn border-shadow delete" class="btn">
+                          <span data-toggle="tooltip" data-placement="bottom" title="order cancelled" class="text-gradient">
+                            <button class="btn btn-sm btn-info">
+                               Requested
+                            </button> 
+                           
+                          </span>
+                          
+                        </a>
+                        <% } %>
                       <% if(order.status== "Returned") { %>
-                      <a class="btn border-shadow delete">
-                        <i class="fa fa-exclamation" aria-hidden="true"></i>
+                      <a  href="" class="btn border-shadow delete" class="btn">
+                        <span data-toggle="tooltip" data-placement="bottom" title="order returned" class="text-gradient">
+                          <button class="btn btn-sm btn-info">
+                            <i class="fa fa-exclamation" aria-hidden="true"></i> &nbsp; Returned</button>
+                         
+                        </span>                    
                       </a>
                       <% } %>
                     </td>
@@ -69,7 +98,7 @@
                     </td>
                     <td>
                       <a href="/invoice_download/<%= order._id %>">
-                        <button type="submit" class="btn btn-sm btn-info">Download</button>
+                        <button type="submit" class="btn btn-sm btn-info">Show</button>
                       </a>
                     </td>
                   </tr>
