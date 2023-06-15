@@ -1273,3 +1273,34 @@ exports.userLogout = (req, res) => {
   req.session.isLoggedin = false;
   res.redirect("/");
 };
+
+
+
+exports.sample = async (req, res) => {
+  const userId=req.session?.userId
+  const category = await CategorySchema.find();
+  const offer=await OfferSchema.find().populate('category').where({status:'active'})
+  const page = parseInt(req.query.page) || 1;
+  const skip = (page - 1) * ITEMS_PER_PAGE;
+  const user=await UsersSchema.findOne({_id:userId})
+  const totalProducts = await ProductSchema.countDocuments();
+  const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
+
+  let product = await ProductSchema.find({
+    isDeleted: false,
+    stock: { $gte: 1 },
+  })
+    .populate("category_name")
+    .skip(skip)
+    .limit(ITEMS_PER_PAGE);
+  const username = req.session?.username;
+  res.render("sample", {
+    product,
+    category,
+    username,
+    currentPage: page,
+    totalPages,
+    offer,
+    user
+  });
+};

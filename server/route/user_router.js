@@ -131,7 +131,7 @@ route.get("/user_logout", controller.userLogout);
 
 
 
-
+route.get('/sample', isAuth, userStatus, controller.sample)
 
 
 

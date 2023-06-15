@@ -1,5 +1,337 @@
 <%- include('header') %>
-
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<style>
+   
+  *::after,
+  *::before {
+    box-sizing: inherit;
+    margin: 0;
+    padding: 0;
+  }
+  
+  html { font-size: 62.5%; }
+  
+  body {
+    box-sizing: border-box;
+    font-family: 'Open Sans', sans-serif;
+    position: relative;
+    
+  }
+  
+  /* Typography =======================*/
+  
+  /* Headings */
+  
+  /* Main heading for card's front cover */
+  .card-front__heading {
+    font-size: 1.5rem;
+    margin-top: .25rem;
+  }
+  
+  /* Main heading for inside page */
+  .inside-page__heading { 
+    padding-bottom: 1rem; 
+    width: 100%;
+  }
+  
+  /* Mixed */
+  
+  /* For both inside page's main heading and 'view me' text on card front cover */
+  .inside-page__heading,
+  .card-front__text-view {
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin-top: .2rem;
+  }
+  
+  .inside-page__heading--city,
+  .card-front__text-view--city { color: #ff62b2; }
+  
+  
+  
+  
+  
+  
+  /* Front cover */
+  
+  .card-front__tp { color: #fafbfa; }
+  
+  /* For pricing text on card front cover */
+  .card-front__text-price {
+    font-size: 1.2rem;
+    margin-top: -.2rem;
+  }
+  
+  /* Back cover */
+  
+  /* For inside page's body text */
+  .inside-page__text {
+    color: #333;
+  }
+  
+  /* Icons ===========================================*/
+  
+  .card-front__icon {
+    fill: #fafbfa;
+    font-size: 3vw;
+    height: 3.25rem;
+    margin-top: -.5rem;
+    width: 10.25rem;
+  }
+  
+  /* Buttons =================================================*/
+  
+  .inside-page__btn {
+    background-color: transparent;
+    border: 3px solid;
+    border-radius: .5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-top: 1rem;
+    overflow: hidden;
+  
+    position: relative;
+    text-decoration: none;
+    transition: all .3s ease;
+    width: 100%;
+    z-index: 10;
+  }
+  
+  .inside-page__btn::before { 
+    content: "";
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    transform: scaleY(0);
+    transition: all .3s ease;
+    width: 100%;
+    z-index: -1;
+  }
+  
+  .inside-page__btn--city { 
+    border-color: #ff40a1;
+    color: #ff40a1;
+  }
+  
+  .inside-page__btn--city::before { 
+    background-color: #ff40a1;
+  }
+  
+  
+  
+  
+  .inside-page__btn:hover { 
+    color: #fafbfa;
+  }
+  
+  .inside-page__btn:hover::before { 
+    transform: scaleY(1);
+  }
+  
+  /* Layout Structure=========================================*/
+  
+  .main {
+    background: linear-gradient(
+      to bottom right,
+      #eee8dd,
+      #e3d9c6
+    );
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100vh;
+    width: 100%;
+  }
+  
+  /* Container to hold all cards in one place */
+  .card-area {
+    align-items: center;
+    display: flex;
+    flex-wrap: nowrap;
+    height: 100%;
+    justify-content: space-evenly;
+    padding: 1rem;
+  }
+  
+  /* Card ============================================*/
+  
+  /* Area to hold an individual card */
+  .card-section {
+    align-items: center;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    width: 100%;
+  }
+  
+  /* A container to hold the flip card and the inside page */
+  .card {
+    background-color: rgba(0,0,0, .05);
+    box-shadow: -.1rem 1.7rem 6.6rem -3.2rem rgba(0,0,0,0.5);
+    height: 30rem;
+    position: relative;
+    transition: all 1s ease;
+    width: 21rem;
+    margin-right: 8rem;
+  }
+  
+  /* Flip card - covering both the front and inside front page */
+  
+  /* An outer container to hold the flip card. This excludes the inside page */
+  .flip-card {
+    height: 30rem;
+    perspective: 100rem;
+    position: absolute;
+    right: 0;
+    transition: all 1s ease;
+    visibility: hidden;
+    width: 21rem;
+    z-index: 100;
+    
+  }
+  
+  /* The outer container's visibility is set to hidden. This is to make everything within the container NOT set to hidden  */
+  /* This is done so content in the inside page can be selected */
+  .flip-card > * {
+    visibility: visible;
+    
+  }
+  
+  /* An inner container to hold the flip card. This excludes the inside page */
+  .flip-card__container {
+    height: 100%;
+    position: absolute;
+    right: 0;
+    transform-origin: left;
+    transform-style: preserve-3d;
+    transition: all 1s ease;
+    width: 100%;
+    
+  }
+  
+  .card-front,
+  .card-back {
+    backface-visibility: hidden;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
+  
+  /* Styling for the front side of the flip card */
+  
+  /* container for the front side */
+  .card-front {
+   
+    height: 30rem;
+    width: 21rem;
+  }
+  
+  /* Front side's top section */
+  .card-front__tp {
+    align-items: center;
+    clip-path: polygon(0 0, 100% 0, 100% 90%, 57% 90%, 50% 100%, 43% 90%, 0 90%);
+    display: flex;
+    flex-direction: column;
+    height: 30rem;
+    justify-content: center;
+   
+  }
+  
+  .card-front__tp--city {
+    background: linear-gradient(
+      to bottom,
+      #3f3a3d,
+      #3c3a3b
+    );
+    
+    
+  }
+  
+  
+  /* Front card's bottom section */
+  .card-front__bt {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+   
+  }
+  
+  /* Styling for the back side of the flip card */
+  
+  .card-back {
+    background-color: #fafbfa;
+    transform: rotateY(180deg);
+  }
+  
+  /* Specifically targeting the <video> element */
+  .video__container {
+    clip-path: polygon(0% 0%, 100% 0%, 90% 50%, 100% 100%, 0% 100%);
+    height: auto;
+    min-height: 100%;
+    object-fit: cover;
+    width: 100%;
+  }
+  
+  /* Inside page */
+  
+  .inside-page {
+    background-color: #fafbfa;
+    box-shadow: inset 20rem 0px 5rem -2.5rem rgba(0,0,0,0.25);
+    height: 100%;
+    padding: 1rem;
+    position: absolute;
+    right: 0;
+    transition: all 1s ease;
+    width: 21rem;
+    z-index: 1;
+  }
+  
+  .inside-page__container {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    text-align: center; 
+    width: 100%;
+  }
+  
+  /* Functionality ====================================*/
+  
+  /* This is to keep the card centered (within its container) when opened */
+  .card:hover {
+    box-shadow:
+    -.1rem 1.7rem 6.6rem -3.2rem rgba(0,0,0,0.75);
+    width: 30rem;
+  }
+  
+  /* When the card is hovered, the flip card container will rotate */
+  .card:hover .flip-card__container {
+    transform: rotateY(-180deg);
+  }
+  
+  /* When the card is hovered, the shadow on the inside page will shrink to the left */
+  .card:hover .inside-page {
+    box-shadow: inset 1rem 0px 5rem -2.5rem rgba(0,0,0,0.1);
+  }
+  
+  /* Footer ====================================*/
+  
+  .footer {
+    background-color: #333;
+     margin-top: 3rem;
+    padding: 1rem 0;
+    width: 100%;
+  }
+  
+  .footer-text {
+    color: #fff;
+    font-size: 1.2rem;
+    text-align: center;
+  }
+  </style>
 <!-- breadcrumb part start-->
 <section class="breadcrumb_part">
   <div class="container">
@@ -11,13 +343,16 @@
       </div>
     </div>
   </div>
-</section>
+</section>  
 <!-- breadcrumb part end-->
 
 <!-- product list part start-->
 <div class="container">
 <div class="row">
-
+  <% if(locals.msg) { %>
+    <div id="msg" class="alert alert-success"><%- locals.msg -%></div>
+    <%}%>
+    
   <div class="col-lg-8">
     <button
     type="submit"
@@ -63,96 +398,106 @@
     </form>
   </div> 
 </div>
-<section class="product_list section_padding">
-  <div class="container">
-    <div class="row">
-      <div class="col-md-12">
-       
-        <% if(product && product.length>0){ %>
-        <% product.forEach(function(product) { %>
-        <div class="single_product_item">
-          <div class="single_product_item_thumb">
-            <div class="row">
-              <div class="col-lg-4">
-                <a href="/single-product/<%= product._id %>">
-                  <img
-                    style="width: 230px; height: 300px"
-                    src="/<%= product.photo[0] %>"
-                    alt="#"
-                    class="img-fluid"
-                /></a>
-              </div>
-              <form method="post" action="/add_to_wishlist/<%= product._id %>">
-                <input type="hidden" name="id" value="<%= product._id %>" />
-                
-                      <div>
-                        <button type="submit" style="background: none; border: none">
-                          <i class="fas fa-heart" style="color: #dd1604; font-size: 24px"></i>
-                        </button>
-                      </div>
-                     </form>
-              
-              
 
-              <div class="col-lg-6 ml-5">
-                <h3>
-                  <a href="/single-product/<%= product._id %>"
-                    ><%= product.name %></a
-                  >
-                </h3>
-
-                <p id="price" style="color: black">
-                  <%= product.category_name.category %>
-                </p>
-                <% let count = 0 %>
-                <% offer.forEach((offer) => { %>
-                  <% if (offer.category._id.toString() === product.category_name._id.toString()) { %>
-                    <% count++ %>
-                    <p id="price" style="color: rgb(171, 41, 41)">
-                       ₹ <s><%= product.price %></s> <br>
-                      Offer Price ₹ <%= offer.amount %>
-                    </p>
-                  <% } %>
-                <% }) %>
-                
-                <% if (count === 0) { %>
-                  <p id="price" style="color: rgb(171, 41, 41)">
-                    ₹ <%= product.price %>
-                  </p>
-                <% } %>
-
-                <form method="post" action="/get_cart/<%= product._id %>">
-                  <input
-                    type="hidden"
-                    name="price"
-                    value="<%= product.price %>"
-                  />
-                  <input type="hidden" name="quantity" value="1" />
-                  <div class="mt-5">
-                    <button type="submit" class="btn btn-outline-secondary">
-                      Add To Cart
-                    </button>
+<div class="container ml-4">
+  
+  <% if (product && product.length > 0) { %>
+    <div class="row ml-2 mt-5">
+      <% product.forEach(function(product) { %>
+        <div class="col-sm-4 mt-5">
+        
+          <div class="card mt-5 ">
+            
+            <div class="flip-card">
+             
+              <div class="flip-card__container">
+                <div class="card-front">
+                  <div class="card-front__tp card-front__tp--city">
+                    <div class="card-front__heading">
+                      <a href="/single-product/<%= product._id %>">
+                        <img src="/<%= product.photo[0] %>" alt="#"  style="width: 230px; height: 300px" class="img-fluid" />
+                      </a>
+                    </div>
                   </div>
-                </form>
+                  <div class="card-front__bt">
+                    <p class="card-front__text-view card-front__text-view--city">View me</p>
+                  </div>
+                </div>
+                <div class="card-back">
+                  <a href="/single-product/<%= product._id %>">
+                    <img
+                      style="width: 230px; height: 300px"
+                      src="/<%= product.photo[0] %>"
+                      alt="#"
+                      class="img-fluid"
+                  /></a>
+                </div>
               </div>
             </div>
+            <div class="inside-page">
+              <div class="inside-page__container">
+               
+                  <h3 class="inside-page__heading inside-page__heading--city">
+                      <a href="/single-product/<%= product._id %>"
+                          ><%= product.name %></a
+                        >
+                  </h3>
+                  <p  id="price" class="inside-page__text">
+                      <%= product.category_name.category %>
+                  </p>
+                  <% let count = 0 %>
+                  <% offer.forEach((offer) => { %>
+                      <% if (offer.category._id.toString() === product.category_name._id.toString()) { %>
+                        <% count++ %>
+                        <p id="price" style="color: rgb(171, 41, 41)">
+                           ₹ <s><%= product.price %></s> <br>
+                          Offer Price ₹ <%= offer.amount %>
+                        </p>
+                      <% } %>
+                    <% }) %>
+                    
+                    <% if (count === 0) { %>
+                      <p id="price" style="color: rgb(171, 41, 41)">
+                        ₹ <%= product.price %>
+                      </p>
+                    <% } %>
+                   
+                  <form method="post" action="/get_cart/<%= product._id %>">
+                      <input
+                      type="hidden"
+                      name="price"
+                      value="<%= product.price %>"
+                      />
+                      <input type="hidden" name="quantity" value="1" />   
+                      <button type="submit" class="inside-page__btn inside-page__btn--city">Add to cart</button>
+                  </form>   
+                  <form method="post" action="/add_to_wishlist/<%= product._id %>">
+                      <input
+                      type="hidden"
+                      name="price"
+                      value="<%= product.price %>"
+                      />
+                      <input type="hidden" name="quantity" value="1" />   
+                      <button type="submit" class="inside-page__btn inside-page__btn--city">Add to Wishlist</button>
+                  </form>     
+              </div>
+          </div>
           </div>
         </div>
-        
-        <% }) %>
-        <% } %>
-        <% if(product.length==0){ %>
-          <div align="center">
-            <img src="/assets/img/no products.jpg" alt="#" class="img-fluid">
-          </div>
-         
-        <% } %>
-        
-      </div>
+      <% }) %>
+      
     </div>
-  </div>
-</section>
+    <% } %>
+    <% if(product.length==0){ %>
+      <div align="center">
+        <img src="/assets/img/no products.jpg" alt="#" class="img-fluid">
+      </div>
+     
+  <% } %>
 </div>
+
+  
+    
 <!-- product list part end-->
 
 
@@ -187,8 +532,15 @@
   </ul>
 </nav>
 
+<script>
+  setTimeout(() => {
 
+      document.getElementById('msg').style.display="none"
+      
+  }, 3000);
+</script>
 <%- include('footer') %>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
 <script>
   $(document).ready(function(){
@@ -206,3 +558,4 @@
   })
   
 </script>
+

@@ -82,7 +82,7 @@ figure{
     
 
       <div class="col-lg-6 mt-5 ">
-        <div id="productText"  class="single_product_text text-center ml-5  ">
+        <div id="productText1"  class="single_product_text text-center ml-5  ">
           <h3><%= product.name %><br /></h3>
           <p>
             Lorem Ipsum is simply dummy text of the printing and typesetting
@@ -96,10 +96,10 @@ figure{
             PageMaker including versions of Lorem Ipsum.
           </p>
         </div>
-        <div class="single_product_text text-center">
+        <div  id="productText2" class="single_product_text text-center">
           <form action="/get_cart/<%= product._id %>" method="post">
             <div class="card_area">
-              <div class="product_count_area">
+              <div  class="product_count_area">
                 <p style="color: rgb(29, 26, 26)">Quantity</p>
                 <div class="product_count d-inline-block">
                   <span class="product_count_item inumber-decrement">
@@ -142,7 +142,8 @@ figure{
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
-  var productText = document.getElementById('productText');
+  var productText1 = document.getElementById('productText1');
+  var productText2 = document.getElementById('productText2');
   var holder = document.querySelector('.image-holder');
 var image = document.getElementById('image');
 var previewHolder = document.querySelector('.image-preview');
@@ -183,7 +184,8 @@ holder.addEventListener('mousemove', (event) => {
 holder.addEventListener('mouseenter', () => {
   previewHolder.classList.remove('d-none');
   let magGlass = document.createElement('DIV');
-  productText.classList.add('d-none');
+  productText1.classList.add('d-none');
+  productText2.classList.add('d-none');
   magGlass.className = 'magnifiying-glass';
   holder.appendChild(magGlass);
 });
@@ -191,7 +193,8 @@ holder.addEventListener('mouseenter', () => {
 holder.addEventListener('mouseleave', () => {
   var magGlass = holder.querySelector('.magnifiying-glass');
   previewHolder.classList.add('d-none');
-  productText.classList.remove('d-none');
+  productText1.classList.remove('d-none');
+  productText2.classList.remove('d-none');
   magGlass.parentNode.removeChild(magGlass);
   imagePreview.style.top = 0;
   imagePreview.style.left = 0;
