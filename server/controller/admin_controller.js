@@ -187,9 +187,10 @@ exports.salesReportPage= async (req, res) => {
   try {
     // Retrieve sales data from the database
     const salesData = await orderSchema.find().where({status:"delivered"}).populate('user')
-  
+  const   startdate=""
+   const enddate=""
     // Render the EJS template with the sales data
-    res.render('sales_report', { salesData,pagename });
+    res.render('sales_report', { salesData,pagename,startdate,enddate });
   } catch (error) {
     // Handle any errors that occur during the process
     console.error(error);
@@ -202,9 +203,9 @@ exports.salesReportPage= async (req, res) => {
 
 exports.filterSalesReport = async (req, res) => {
   
-  const pagename = 'Sales Report';
+  const pagename='Sales Report'
   try {
-    const { startdate, enddate } = req.body;
+    const { startdate, enddate } = req.query;
     
     
 
@@ -224,12 +225,7 @@ exports.filterSalesReport = async (req, res) => {
     const salesData = await query.exec();
     
    
-    return res.json({
-      success: true,
-      message: 'Coupon Expired',
-      salesData
-    
-    });
+   res.render('sales_report',{salesData,startdate,enddate,pagename})
    
    
   } catch (error) {

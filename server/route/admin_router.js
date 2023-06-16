@@ -50,7 +50,7 @@ route.post("/admin_login",admin_controller.adminLogin)
 route.get("/admin_index",isAuth,admin_controller.adminIndex)
 
 route.get("/sales_report",isAuth,admin_controller.salesReportPage)
-route.post('/filter_salesreport', isAuth, admin_controller.filterSalesReport);
+route.get('/filter_salesreport', isAuth, admin_controller.filterSalesReport);
 
 route.get("/category",isAuth, admin_controller.findCategory)
 route.get("/add_category",isAuth,admin_controller.addCategoryPage)

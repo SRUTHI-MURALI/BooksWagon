@@ -6,19 +6,21 @@
     <div class="row mt-3">
       <div class="">
         <!-- product.ejs -->
-        <form id="filterForm" action="/filter_salesreport" method="post" onsubmit="filterSalesReport(event)">
+        <form id="filterForm" action="/filter_salesreport" method="get" >
           <label for="minPrice">Start: </label>
           <input
             type="date"
+            value="<%= startdate %>"
             name="startdate"
             style="width: 110px"
             id="minPrice",
             placeholder="Start"
-            id="selectedDates"
+           
           />
           <label for="maxPrice">to</label>
           <input
             type="date"
+            value="<%= enddate %>" 
             name="enddate"
             style="width: 110px"
             id="maxPrice",
@@ -103,47 +105,4 @@
         ]
       });
     });
-</script>
-
-
-  <script>
-  // Get the form element using its ID
-  const form = document.getElementById("filterForm");
-  
-
-  // Add a submit event listener to the form
-  form.addEventListener("submit", filterSalesReport);
-
-  function filterSalesReport(event) {
-   
-    event.preventDefault(); // Prevent the form from submitting
-
-    // Get the selected start and end dates
-    var startDate = document.getElementById("minPrice").value;
-    var endDate = document.getElementById("maxPrice").value;
-
-    // Display the selected dates
-    document.getElementById("selectedDates").textContent =
-      "Selected Dates: " + startDate + " to " + endDate;
-
-    // Serialize the form data
-    var formData = new FormData(form);
-    
-
-    // Send an AJAX request to the server
-    fetch("/filter_salesreport", {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => response.text())
-      .then((data) => {
-        console.log(data,"lkl");
-        // Update the sample table with the retrieved data
-        document.getElementById("sample").innerHTML = data;
-        console.log(data.salesData)
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-  }
 </script>
