@@ -889,6 +889,9 @@ exports.filterProduct = async (req, res) => {
 exports.filterOrder = async (req, res) => {
   const pagename='Order'
   const { minPrice, maxPrice } = req.query;
+  const page = parseInt(req.query.page) || 1;
+  const ITEMS_PER_PAGE = 10; // Define the number of items per page
+
   
   let filteredProducts = orderSchema.find().populate('user').populate('items.product');
   
@@ -901,9 +904,13 @@ exports.filterOrder = async (req, res) => {
       filteredProducts = filteredProducts.where('total').lte(maxPrice);
     }
 
-    const orders = await filteredProducts.exec();
+    const totalProducts = await productSchema.countDocuments();
+    const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
+    const skip = (page - 1) * ITEMS_PER_PAGE;
+   
+    const orders = await filteredProducts.skip(skip).limit(ITEMS_PER_PAGE).exec();
 
-    res.render('order', { orders,pagename });
+    res.render('order', { orders,pagename,currentPage: page, totalPages  });
   } catch (error) {
     console.error(error);
     res.status(500).send({ message: 'Internal server error' });
