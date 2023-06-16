@@ -102,6 +102,7 @@ route.get("/empty_cart",  isAuth, userStatus, controller.emptyCart);
 
 route.get("/address_page",isAuth, userStatus,controller.addressPage);
 route.post("/add_address", isAuth, userStatus,controller.addNewAddress);
+route.post('/delete_address', isAuth, userStatus, controller.deleteaddress)
 
 route.post("/checkout", isAuth, userStatus,controller.checkOut);
 
@@ -131,7 +132,7 @@ route.get("/user_logout", controller.userLogout);
 
 
 
-route.get('/sample', isAuth, userStatus, controller.sample)
+
 
 
 

@@ -111,10 +111,12 @@
         <div class="col-lg-4">
           <h3>Existing Address</h3>
           <% address.address.forEach(function(address, index) { %>
+           
           <form class="contact_form" method="post" action="/checkout">
             <div class="col-md-12 form-group">
               <input type="radio" id="f-option<%= index %>" name="selectedAddress" value="<%= address._id %>" required />
               <label for="f-option<%= index %>"><h5 style="text-decoration: underline;">Address <%= index+1 %></h5></label>
+              <i id="remove_<%= address._id %>" class="fa fa-times ml-3"  onclick="confirmaddressRemove( event,'<%= address._id %>')" ></i>
               <p><%= address.name %></p>
               <p><%= address.add1 %> <%= address.add2 %></p>
               <p><%= address.city %></p>
@@ -135,6 +137,9 @@
   </div>
 </section>
 <!--================End Checkout Area =================-->
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
   function validateForm() {
@@ -211,5 +216,55 @@
     return true;
   }
 </script>
+
+<script>
+ 
+  function confirmaddressRemove(event, item) {
+   event.preventDefault();
+   Swal.fire({
+     title: "Are you sure?",
+     text: "You are about to remove this address",
+     icon: "warning",
+     showCancelButton: true,
+     confirmButtonText: "Yes, remove it!",
+     cancelButtonText: "No, cancel",
+     reverseButtons: true,
+   }).then((result) => {
+     if (result.isConfirmed) {
+     Swal.fire({
+         title: "Deleted!",
+         text: "Address Deleted",
+         icon: "success"
+       })
+       AddressRemove(item);
+     }
+   });
+ }
+ 
+ function AddressRemove(item) {
+   $.ajax({
+     url: "/delete_address",
+     type: "post",
+     data: { item: item },
+     success: function (data) {
+      
+ 
+       if (data.status) {
+         const id = `remove_${item}`;
+         console.log(id);
+         $("#" + id).parent().remove();
+ 
+       } else {
+         console.log('error');
+       }
+     },
+     error: function (error) {
+       console.log('AJAX request failed:', error);
+     }
+   });
+ }
+   
+ 
+ </script>
 
 <%- include('footer') %>

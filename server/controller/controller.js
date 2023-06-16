@@ -178,7 +178,7 @@ exports.filterProductsByCategory = async (req, res) => {
     const category = await CategorySchema.find();
     const id = req.params.id;
     const categoryId = await CategorySchema.findOne({ _id: id });
-
+    const offer=await OfferSchema.find().populate('category').where({status:'active'})
     const page = parseInt(req.query.page) || 1;
 
     const skip = (page - 1) * ITEMS_PER_PAGE;
@@ -208,6 +208,7 @@ exports.filterProductsByCategory = async (req, res) => {
       username,
       currentPage: page,
       totalPages,
+      offer
     });
   } catch (error) {
     console.log(error);
@@ -222,12 +223,10 @@ exports.priceFilter = async (req, res) => {
   const category = await CategorySchema.find();
   const page = parseInt(req.query.page) || 1;
   const ITEMS_PER_PAGE = 5; // Define the number of items per page
-
+  const offer=await OfferSchema.find().populate('category').where({status:'active'})
   try {
     const { minPrice, maxPrice } = req.query;
-
     let filteredProducts = ProductSchema.find().populate("category_name");
-
     if (minPrice && maxPrice) {
       filteredProducts = filteredProducts
         .where("price")
@@ -238,28 +237,27 @@ exports.priceFilter = async (req, res) => {
     } else if (maxPrice) {
       filteredProducts = filteredProducts.where("price").lte(maxPrice);
     }
-
     const totalProducts = await ProductSchema.countDocuments();
     const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
     const skip = (page - 1) * ITEMS_PER_PAGE;
-
     const product = await filteredProducts
       .skip(skip)
       .limit(ITEMS_PER_PAGE)
       .exec();
-
     res.render("product_list", {
       product,
       category,
       username,
       currentPage: page,
       totalPages,
+      offer
     });
   } catch (error) {
     console.error(error);
     res.status(500).send({ message: "Internal server error" });
   }
 };
+
 
 /************** add to wishlist **************/
 
@@ -657,6 +655,46 @@ exports.addNewAddress = async (req, res) => {
   }
 };
 
+/************** delete new address **************/
+
+exports.deleteaddress= async (req, res) => {
+  try {
+    const { item } = req.body;
+    const userId = req.session.userId;
+
+    if (!item) {
+      return res.json({ status: false, message: "address not found" });
+    }
+
+    const user = await UsersSchema.findOne({ _id: userId });
+
+ 
+    if (!user) {
+      return res.json({ status: false, message: "User not found" });
+    }
+    const addressIndex = user.address.findIndex(address =>address._id.toString() === item);
+
+    if (addressIndex === -1) {
+      return res.json({ status: false, message: "Address not found" });
+    }
+
+    // Remove the address from the user's address array
+    user.address.splice(addressIndex, 1);
+
+    // Save the updated user object
+    await user.save();
+
+    return res.json({
+      status: true,
+      message: "Address removed successfully",
+    });
+    
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ status: false, message: "Internal server error" });
+  }
+};
+
 /************** check out page **************/
 
 exports.checkOut = async (req, res) => {
@@ -1020,8 +1058,8 @@ exports.addOrder = async (req, res) => {
         payment_method: "paypal",
       },
       redirect_urls: {
-        return_url: "http://localhost:1005/paypal-success",
-        cancel_url: "http://localhost:1005/paypal-err",
+        return_url: "https://bookswagon.online/paypal-success",
+        cancel_url: "https://bookswagon.online/paypal-err",
       },
       transactions: [
         {
@@ -1276,31 +1314,7 @@ exports.userLogout = (req, res) => {
 
 
 
-exports.sample = async (req, res) => {
-  const userId=req.session?.userId
-  const category = await CategorySchema.find();
-  const offer=await OfferSchema.find().populate('category').where({status:'active'})
-  const page = parseInt(req.query.page) || 1;
-  const skip = (page - 1) * ITEMS_PER_PAGE;
-  const user=await UsersSchema.findOne({_id:userId})
-  const totalProducts = await ProductSchema.countDocuments();
-  const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
 
-  let product = await ProductSchema.find({
-    isDeleted: false,
-    stock: { $gte: 1 },
-  })
-    .populate("category_name")
-    .skip(skip)
-    .limit(ITEMS_PER_PAGE);
-  const username = req.session?.username;
-  res.render("sample", {
-    product,
-    category,
-    username,
-    currentPage: page,
-    totalPages,
-    offer,
-    user
-  });
-};
+
+
+
