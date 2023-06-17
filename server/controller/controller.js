@@ -1058,7 +1058,7 @@ exports.addOrder = async (req, res) => {
         payment_method: "paypal",
       },
       redirect_urls: {
-        return_url: "https://bookswagon.online/paypal-success",
+        return_url: `https://bookswagon.online/paypal-success/${userId}`,
         cancel_url: "https://bookswagon.online/paypal-err",
       },
       transactions: [
@@ -1092,10 +1092,16 @@ exports.addOrder = async (req, res) => {
 /************** paypal success **************/
 
 exports.paypal_success = async (req, res) => {
-  const userId = req.session.userId;
-  const username = req.session.username;
 
+  const userId = req.params.id;
+  console.log(userId);
+  const user = await UsersSchema.findById(userId)
+  req.session.username = user.name
+  req.session.isAuth = true;  
+  req.session.userId = userId;
+  req.session.isLoggedin = true;
   const payerId = req.query.PayerID;
+ const  username=req.session.username
   const paymentId = req.query.paymentId;
 
   res.render("paypalSuccess", { payerId, username, userId });

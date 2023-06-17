@@ -114,7 +114,7 @@ route.post("/redeem_coupon",  isAuth, userStatus, controller.redeem_coupon);
 route.post('/delete_coupon', isAuth, userStatus, controller.deleteCouponPay)
 
 route.post("/add_order/:id", isAuth, userStatus,controller.addOrder);
-route.get('/paypal-success' ,controller.paypal_success)
+route.get('/paypal-success/:id' ,controller.paypal_success)
 route.get('/paypal-err',isAuth, userStatus,controller.paypal_err)
 route.get("/delete_ordered_item/:id", isAuth, userStatus,controller.deleteOrderedItem);
 route.get('/return_order/:id',userStatus, isAuth,controller.returnOrder)
