@@ -136,7 +136,7 @@ exports.verify_password_OTP = async (req, res) => {
       // If the verification is successful, do something
 
       // res.render('home', { message: "Verification successful" });
-      usersSchema.findOne({ phone: phoneNumber }).then((user) => {
+     const user= usersSchema.findOne({ phone: phoneNumber }).then((user) => {
         const saltRounds = 10; // You can adjust the number of salt rounds as needed
         bcrypt.hash(password, saltRounds, (err, hash) => {
           if (err) {
@@ -159,6 +159,12 @@ exports.verify_password_OTP = async (req, res) => {
                       message: `Cannot update user with ID: ${phone}. User not found.`,
                     });
                 } else {
+                  const userId = user._id;
+                  const username=user.name
+                  req.session.isAuth = true;
+                  req.session.username = username;
+                  req.session.userId = userId;
+                  req.session.isLoggedin=true;
                   res.render("login", {
                     message: "Successfully updated password",
                   });

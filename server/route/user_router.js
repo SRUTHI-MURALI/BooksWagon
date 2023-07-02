@@ -58,9 +58,6 @@ const userStatus = async (req, res, next) => {
   }
 };
 
-
-
-
 route.get("/", isLoggedin, controller.index);
 route.get("/sign-up", controller.signUp);
 route.post("/api/users", controller.create);
@@ -127,7 +124,7 @@ route.get('/user_profile', isAuth, userStatus, controller.userProfile)
 route.post('/update_userProfile/:id',upload, isAuth, userStatus, controller.profileUpdateFunction);
 route.get('/user_profile_update/:id', userStatus,isAuth, controller.profileUpdate)
 
-
+route.get('/error',isAuth,userStatus,controller.error)
 route.get("/user_logout", controller.userLogout);
 
 

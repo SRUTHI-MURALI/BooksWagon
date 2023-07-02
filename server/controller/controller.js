@@ -108,8 +108,7 @@ exports.findUser = async (req, res) => {
       }
     }
   } catch (error) {
-    console.error(error);
-    res.send("An error occurred while logging in.");
+   res.redirect('/error')
   }
 };
 
@@ -125,49 +124,59 @@ exports.home = async (req, res) => {
 /************** productlist **************/
 
 exports.productList = async (req, res) => {
-  const userId=req.session?.userId
-  const category = await CategorySchema.find();
-  const offer=await OfferSchema.find().populate('category').where({status:'active'})
-  const page = parseInt(req.query.page) || 1;
-  const skip = (page - 1) * ITEMS_PER_PAGE;
-  const user=await UsersSchema.findOne({_id:userId})
-  const totalProducts = await ProductSchema.countDocuments();
-  const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
-
-  let product = await ProductSchema.find({
-    isDeleted: false,
-    stock: { $gte: 1 },
-  })
-    .populate("category_name")
-    .skip(skip)
-    .limit(ITEMS_PER_PAGE);
-  const username = req.session?.username;
-  res.render("product_list", {
-    product,
-    category,
-    username,
-    currentPage: page,
-    totalPages,
-    offer,
-    user
-  });
+  try {
+    const userId=req.session?.userId
+    const category = await CategorySchema.find();
+    const offer=await OfferSchema.find().populate('category').where({status:'active'})
+    const page = parseInt(req.query.page) || 1;
+    const skip = (page - 1) * ITEMS_PER_PAGE;
+    const user=await UsersSchema.findOne({_id:userId})
+    const totalProducts = await ProductSchema.countDocuments();
+    const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
+  
+    let product = await ProductSchema.find({
+      isDeleted: false,
+      stock: { $gte: 1 },
+    })
+      .populate("category_name")
+      .skip(skip)
+      .limit(ITEMS_PER_PAGE);
+    const username = req.session?.username;
+    res.render("product_list", {
+      product,
+      category,
+      username,
+      currentPage: page,
+      totalPages,
+      offer,
+      user
+    });
+  } catch (error) {
+    res.redirect('/error')
+  }
+ 
 };
 
 /************** product search **************/
 
 exports.searchUserProduct = async (req, res) => {
-  const query = req.query.name; // Get the search query from the URL query parameters
-  const category = await CategorySchema.find();
-  const username = req.session?.username;
-  // Perform the search using Mongoose
-  ProductSchema.find({ name: { $regex: new RegExp(query, "i") } })
-    .then((product) => {
-      res.render("product_list", { product, category, username });
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send("Internal Server Error");
-    });
+  try {
+    const query = req.query.name; // Get the search query from the URL query parameters
+    const category = await CategorySchema.find();
+    const username = req.session?.username;
+    // Perform the search using Mongoose
+    ProductSchema.find({ name: { $regex: new RegExp(query, "i") } })
+      .then((product) => {
+        res.render("product_list", { product, category, username });
+      })
+      .catch((err) => {
+        console.error(err);
+        res.status(500).send("Internal Server Error");
+      });
+  } catch (error) {
+    res.redirect('/error')
+  }
+ 
 };
 
 /************** Category filter **************/
@@ -211,8 +220,7 @@ exports.filterProductsByCategory = async (req, res) => {
       offer
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).send({ error: "Internal server error" });
+    res.redirect('/error')
   }
 };
 
@@ -253,8 +261,7 @@ exports.priceFilter = async (req, res) => {
       offer
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).send({ message: "Internal server error" });
+    res.redirect('/error')
   }
 };
 
@@ -293,30 +300,31 @@ exports.addToWishlist = async (req, res) => {
       return res.redirect("/product_list");
     }
   } catch (error) {
-    return res.status(500).send({
-      message:
-        error.message ||
-        "Some error occurred while updating the user's wishlist",
-    });
+    res.redirect('/error')
   }
 };
 
 /************** wishlist page **************/
 
 exports.wishlistPage = async (req, res) => {
-  const username = req.session.username;
-  const userId = req.session.userId;
-  const page = parseInt(req.query.page) || 1;
-  const skip = (page - 1) * ITEMS_PER_PAGE;
-
-  const totalProducts = await UsersSchema.countDocuments();
-  const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
-
-  const user = await UsersSchema.findById(userId)
-    .skip(skip)
-    .limit(ITEMS_PER_PAGE);
-
-  res.render("wishlist", { user, username, totalPages, currentPage: page });
+  try {
+    const username = req.session.username;
+    const userId = req.session.userId;
+    const page = parseInt(req.query.page) || 1;
+    const skip = (page - 1) * ITEMS_PER_PAGE;
+  
+    const totalProducts = await UsersSchema.countDocuments();
+    const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
+  
+    const user = await UsersSchema.findById(userId)
+      .skip(skip)
+      .limit(ITEMS_PER_PAGE);
+  
+    res.render("wishlist", { user, username, totalPages, currentPage: page });
+  } catch (error) {
+    res.redirect('/error')
+  }
+ 
 };
 
 
@@ -352,8 +360,7 @@ exports.deleteWishlistItem = async (req, res) => {
       return res.json({ status: false, message: "Product not found in wishlist" });
     }
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ status: false, message: "Internal server error" });
+    res.redirect('/error')
   }
 };
 
@@ -368,8 +375,7 @@ exports.singleProduct = async (req, res) => {
     const username = req.session.username;
     res.render("single-product", { product, username });
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Error retrieving product");
+    res.redirect('/error')
   }
 };
 
@@ -437,39 +443,43 @@ exports.getCart = async (req, res) => {
 
     res.redirect("/cart");
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Internal server error" });
+    res.redirect('/error')
   }
 };
 
 /************** cart page **************/
 
 exports.cart = async (req, res) => {
-  const username = req.session?.username;
-  const userId = req.session.userId;
-  const page = parseInt(req.query.page) || 1;
-  const skip = (page - 1) * ITEMS_PER_PAGE;
-  const offer=await OfferSchema.find()
-  const totalProducts = await CartSchema.countDocuments();
-  const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
-
-  const cart = await CartSchema.findOne({ user: userId })
-    .populate("items.product")
-    .skip(skip)
-    .limit(ITEMS_PER_PAGE);
-
-  if (!cart || cart.items.length === 0) {
-    res.redirect("/empty_cart");
-  } else {
-    res.render("cart", {
-      username,
-      userId,
-      cart,
-      totalPages,
-      currentPage: page,
-      
-    });
+  try {
+    const username = req.session?.username;
+    const userId = req.session.userId;
+    const page = parseInt(req.query.page) || 1;
+    const skip = (page - 1) * ITEMS_PER_PAGE;
+    const offer=await OfferSchema.find()
+    const totalProducts = await CartSchema.countDocuments();
+    const totalPages = Math.ceil(totalProducts / ITEMS_PER_PAGE);
+  
+    const cart = await CartSchema.findOne({ user: userId })
+      .populate("items.product")
+      .skip(skip)
+      .limit(ITEMS_PER_PAGE);
+  
+    if (!cart || cart.items.length === 0) {
+      res.redirect("/empty_cart");
+    } else {
+      res.render("cart", {
+        username,
+        userId,
+        cart,
+        totalPages,
+        currentPage: page,
+        
+      });
+    }
+  } catch (error) {
+    res.redirect('/error')
   }
+ 
 };
 
 /************** cart increment **************/
@@ -516,7 +526,7 @@ exports.increaseQuantity = async (req, res, next) => {
       quantity,
     });
   } catch (error) {
-    res.json({ success: false, message: "Failed to update quantity." });
+    res.redirect('/error')
   }
 };
 
@@ -553,7 +563,7 @@ exports.decreaseQuantity = async (req, res, next) => {
       quantity,
     });
   } catch (error) {
-    res.json({ success: false, message: "Failed to update quantity." });
+    res.redirect('/error')
   }
 };
 
@@ -592,7 +602,7 @@ exports.deleteCartItems = async (req, res) => {
       res.json({ status: false, message: "cart not found" });
     }
   } catch (error) {
-    console.log("error");
+    res.redirect('/error')
   }
 };
 
@@ -606,17 +616,23 @@ exports.emptyCart = (req, res) => {
 /************** address page **************/
 
 exports.addressPage = async (req, res) => {
-  const username = req.session?.username;
-  const userId = req.session.userId;
-  const address = await UsersSchema.findById(userId);
-
-  res.render("address_page", { username, userId, address });
+  try {
+    const username = req.session?.username;
+    const userId = req.session.userId;
+    const address = await UsersSchema.findById(userId);
+  
+    res.render("address_page", { username, userId, address });
+  } catch (error) {
+    res.redirect('/error')
+  }
+ 
 };
 
 /************** add new address **************/
 
 exports.addNewAddress = async (req, res) => {
-  const userId = req.session.userId;
+  try {
+    const userId = req.session.userId;
   const user = await UsersSchema.findById(userId);
   if (user) {
     const newAddress = {
@@ -653,6 +669,10 @@ exports.addNewAddress = async (req, res) => {
   } else {
     res.redirect("/address_page");
   }
+  } catch (error) {
+    res.redirect('/error')
+  }
+  
 };
 
 /************** delete new address **************/
@@ -690,15 +710,15 @@ exports.deleteaddress= async (req, res) => {
     });
     
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ status: false, message: "Internal server error" });
+    res.redirect('/error')
   }
 };
 
 /************** check out page **************/
 
 exports.checkOut = async (req, res) => {
-  const id = req.body.selectedAddress;
+  try {
+    const id = req.body.selectedAddress;
   const offer=await OfferSchema.find().populate('category')
   const userId = req.session.userId;
   const username = req.session?.username;
@@ -734,12 +754,17 @@ exports.checkOut = async (req, res) => {
     couponfind,
     discount,
   });
+  } catch (error) {
+    res.redirect('/error')
+  }
+  
 };
 
 /************** wallet pay initiate **************/
 
 exports.walletPay = async (req, res) => {
-  const userId = req.session.userId;
+  try {
+    const userId = req.session.userId;
   const user = await UsersSchema.findById({ _id: userId });
   const walletBalance = user.walletAmount;
   const cart = await CartSchema.findOne({ user: userId }).populate(
@@ -772,12 +797,17 @@ exports.walletPay = async (req, res) => {
     totalPrice,
     walletBalance,
   });
+  } catch (error) {
+    res.redirect('/error')
+  }
+  
 };
 
 /************** delete wallet pay **************/
 
 exports.deleteWalletPay = async (req, res) => {
-  const userId = req.session.userId;
+  try {
+    const userId = req.session.userId;
   const user = await UsersSchema.findById({ _id: userId });
 
   const cart = await CartSchema.findOne({ user: userId }).populate(
@@ -806,12 +836,17 @@ exports.deleteWalletPay = async (req, res) => {
     message: "wallet deleted successfully.",
     totalPrice,
   });
+  } catch (error) {
+    res.redirect('/error')
+  }
+  
 };
 
 /************** wallet history **************/
 
 exports.walletHistory = async (req, res) => {
-  const username = req.session?.username;
+  try {
+    const username = req.session?.username;
   const userId = req.session.userId;
   const page = parseInt(req.query.page) || 1;
   const skip = (page - 1) * ITEMS_PER_PAGE;
@@ -848,6 +883,10 @@ exports.walletHistory = async (req, res) => {
     totalPages,
     currentPage: page,
   });
+  } catch (error) {
+    res.redirect('/error')
+  }
+  
 };
 
 /************** redeem coupon **************/
@@ -903,18 +942,15 @@ exports.redeem_coupon = async (req, res) => {
     userCoupon.coupon.push(coupon);
     await userCoupon.save();
   } catch (error) {
-    console.error("Error redeeming coupon:", error);
-    res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
+    res.redirect('/error')
   }
 };
 
 /************** delete coupon pay **************/
 
 exports.deleteCouponPay = async (req, res) => {
-  const userId = req.session.userId;
+  try {
+    const userId = req.session.userId;
   const userCoupon = await UsersSchema.findById(userId);
   const coupon = userCoupon.coupon.pop();
   userCoupon.save();
@@ -941,6 +977,10 @@ exports.deleteCouponPay = async (req, res) => {
     message: "coupon deleted successfully.",
     totalPrice,
   });
+  } catch (error) {
+    res.redirect('/error')
+  }
+  
 };
 
 /************** add order **************/
@@ -948,7 +988,8 @@ exports.deleteCouponPay = async (req, res) => {
 let paypalTotal = 0;
 
 exports.addOrder = async (req, res) => {
-  const id = req.params.id;
+  try {
+    const id = req.params.id;
   const userId = req.session.userId;
   const paymentMethod = req.body.payment_method;
   const product = await ProductSchema.find();
@@ -1087,24 +1128,33 @@ exports.addOrder = async (req, res) => {
 
     await CartSchema.deleteOne({ user: userId });
   }
+  } catch (error) {
+    res.redirect('/error')
+  }
+  
 };
 
 /************** paypal success **************/
 
 exports.paypal_success = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    console.log(userId);
+    const user = await UsersSchema.findById(userId)
+    req.session.username = user.name
+    req.session.isAuth = true;  
+    req.session.userId = userId;
+    req.session.isLoggedin = true;
+    const payerId = req.query.PayerID;
+   const  username=req.session.username
+    const paymentId = req.query.paymentId;
+  
+    res.render("paypalSuccess", { payerId, username, userId });
+  } catch (error) {
+    res.redirect('/error')
+  }
 
-  const userId = req.params.id;
-  console.log(userId);
-  const user = await UsersSchema.findById(userId)
-  req.session.username = user.name
-  req.session.isAuth = true;  
-  req.session.userId = userId;
-  req.session.isLoggedin = true;
-  const payerId = req.query.PayerID;
- const  username=req.session.username
-  const paymentId = req.query.paymentId;
-
-  res.render("paypalSuccess", { payerId, username, userId });
+ 
 };
 
 /************** paypal failed **************/
@@ -1116,54 +1166,60 @@ exports.paypal_err = (req, res) => {
 /************** delete ordered item **************/
 
 exports.deleteOrderedItem = async (req, res) => {
-  const id = req.params.id;
-  const order = await OrderSchema.findById(id).populate("user");
-  const payment = order.payment_method;
-
-  if (payment === "cod") {
-    await OrderSchema.findByIdAndUpdate(
-      id,
-      { status: "cancelled" },
-      { new: true }
-    )
-      .then((updatedOrder) => {
-        res.redirect("/user_order");
-      })
-      .catch(() => res.status(500).send("Failed to update order."));
-  } else {
-    const refundAmount = order.total;
-    let bal = order.user.walletAmount;
-    const updatedWalletAmount = bal + refundAmount;
-
-    await UsersSchema.findByIdAndUpdate(
-      order.user._id,
-      {
-        $push: {
-          wallet: {
-            id: order._id,
-            Balance: refundAmount,
+  try {
+    const id = req.params.id;
+    const order = await OrderSchema.findById(id).populate("user");
+    const payment = order.payment_method;
+  
+    if (payment === "cod") {
+      await OrderSchema.findByIdAndUpdate(
+        id,
+        { status: "cancelled" },
+        { new: true }
+      )
+        .then((updatedOrder) => {
+          res.redirect("/user_order");
+        })
+        .catch(() => res.status(500).send("Failed to update order."));
+    } else {
+      const refundAmount = order.total;
+      let bal = order.user.walletAmount;
+      const updatedWalletAmount = bal + refundAmount;
+  
+      await UsersSchema.findByIdAndUpdate(
+        order.user._id,
+        {
+          $push: {
+            wallet: {
+              id: order._id,
+              Balance: refundAmount,
+            },
           },
+          $set: { walletAmount: updatedWalletAmount },
         },
-        $set: { walletAmount: updatedWalletAmount },
-      },
-      { new: true }
-    );
-
-    await OrderSchema.findByIdAndUpdate(
-      id,
-      { status: "cancelled" },
-      { new: true }
-    )
-      .then((updatedOrder) => {
-        res.redirect("/user_order");
-      })
-      .catch(() => res.status(500).send("Failed to update order."));
+        { new: true }
+      );
+  
+      await OrderSchema.findByIdAndUpdate(
+        id,
+        { status: "cancelled" },
+        { new: true }
+      )
+        .then((updatedOrder) => {
+          res.redirect("/user_order");
+        })
+        .catch(() => res.status(500).send("Failed to update order."));
+    }
+  } catch (error) {
+    res.redirect('/error')
   }
+ 
 };
 
 /************** return order **************/
 
 exports.returnOrder = async (req, res) => {
+ 
   const username = req.session?.username;
   const userId = req.session.userId;
   const id = req.params.id;
@@ -1178,7 +1234,7 @@ exports.returnOrder = async (req, res) => {
     .then((updatedUser) => {
       res.redirect("/user_order");
     })
-    .catch(() => res.status(500).send("Failed to update order."));
+    .catch(() => res.redirect('/error'));
 };
 
 /************** order history **************/
@@ -1208,28 +1264,33 @@ exports.orderHistory = async (req, res) => {
       currentPage: page,
     });
   } catch (error) {
-    // Handle error
-    console.error(error);
+    res.redirect('/error')
   }
 };
 
 /************** order details page **************/
 
 exports.userOrderDetails = async (req, res) => {
-  const username = req.session?.username;
-  const { id } = req.params;
-
-  const orders = await OrderSchema.findById(id)
-    .populate({ path: "items.product" })
-    .populate({ path: "user" });
-
-  res.render("userOrderDetails", { orders, username });
+  try {
+    const username = req.session?.username;
+    const { id } = req.params;
+  
+    const orders = await OrderSchema.findById(id)
+      .populate({ path: "items.product" })
+      .populate({ path: "user" });
+  
+    res.render("userOrderDetails", { orders, username });
+  } catch (error) {
+    res.redirect('/error')
+  }
+ 
 };
 
 /************** user invoice **************/
 
 exports.userInvoice = async (req, res) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
   const userId = req.session.userId;
 
   const username = req.session.username;
@@ -1238,23 +1299,33 @@ exports.userInvoice = async (req, res) => {
   const user = await UsersSchema.findById(userId);
 
   res.render("user_invoice", { username, order });
+  } catch (error) {
+    res.redirect('/error')
+  }
+  
 };
 
 /************** user profile **************/
 
 exports.userProfile = async (req, res) => {
-  const username = req.session?.username;
-  const userId = req.session.userId;
-  const user = await UsersSchema.findById(userId);
-
-  const address = await UsersSchema.findById(userId);
-  res.render("user_profile", { username, user, address });
+  try {
+    const username = req.session?.username;
+    const userId = req.session.userId;
+    const user = await UsersSchema.findById(userId);
+  
+    const address = await UsersSchema.findById(userId);
+    res.render("user_profile", { username, user, address });
+  } catch (error) {
+    res.redirect('/error')
+  }
+ 
 };
 
 /************** updating user profile **************/
 
 exports.profileUpdateFunction = async (req, res) => {
-  let new_image = "";
+  try {
+    let new_image = "";
   if (req.file) {
     new_image = req.file.filename;
 
@@ -1291,21 +1362,29 @@ exports.profileUpdateFunction = async (req, res) => {
       res.redirect("/user_profile");
     }
   } catch (error) {
-    console.error(error);
-    res.status(500).send(error);
+    res.redirect('/error')
   }
+  } catch (error) {
+    res.redirect('/error')
+  }
+  
 };
 
 /************** user profile update **************/
 
 exports.profileUpdate = async (req, res) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
 
   const username = req.session?.username;
   const userId = req.session.userId;
   const user = await UsersSchema.findById(userId);
   const address = await UsersSchema.findById(userId);
   res.render("personal_information", { username, user, address });
+  } catch (error) {
+    res.redirect('/error')
+  }
+  
 };
 
 /************** log out **************/
@@ -1319,8 +1398,10 @@ exports.userLogout = (req, res) => {
 };
 
 
+/************** log out **************/
 
-
-
+exports.error = (req,res)=>{
+  res.render('404')
+}
 
 

@@ -11,6 +11,13 @@ const isAuth = (req, res, next) => {
     res.redirect("/login");
   }
 };
+const isLoggedin = (req, res, next) => {
+  if (req.session.isLoggedin) {
+    res.redirect("/home");
+  } else {
+    next();
+  }
+};
 
 router.post("/sendOTP", twilio_sms.sendOTP);
 
